@@ -1,5 +1,6 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/abhinav/goldmark-toc.svg)](https://pkg.go.dev/github.com/abhinav/goldmark-toc)
 [![Go](https://github.com/abhinav/goldmark-toc/actions/workflows/go.yml/badge.svg)](https://github.com/abhinav/goldmark-toc/actions/workflows/go.yml)
+[![codecov](https://codecov.io/gh/abhinav/goldmark-toc/branch/main/graph/badge.svg?token=OLXTVHEIOG)](https://codecov.io/gh/abhinav/goldmark-toc)
 
 goldmark-toc is an add-on for the [goldmark] Markdown parser that adds support
 for rendering a table-of-contents.
