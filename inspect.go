@@ -1,6 +1,9 @@
 package toc
 
-import "github.com/yuin/goldmark/ast"
+import (
+	"github.com/yuin/goldmark/ast"
+	"github.com/yuin/goldmark/util"
+)
 
 // InspectOption customizes the behavior of Inspect.
 //
@@ -83,7 +86,7 @@ func Inspect(n ast.Node, src []byte, opts ...InspectOption) (*TOC, error) {
 			target = appendChild(parent)
 		}
 
-		target.Title = heading.Text(src)
+		target.Title = util.UnescapePunctuations(heading.Text(src))
 		if id, ok := n.AttributeString("id"); ok {
 			target.ID, _ = id.([]byte)
 		}
