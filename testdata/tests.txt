@@ -52,3 +52,21 @@ World
 <h1 id="baz">Baz</h1>
 <h3 id="qux">Qux</h3>
 //= = = = = = = = = = = = = = = = = = = = = = = =//
+4
+//- - - - - - - - -//
+# Foo\-Bar
+
+## Bar\-Baz
+//- - - - - - - - -//
+<h1>Table of Contents</h1>
+<ul>
+<li>
+<a href="#foo-bar">Foo-Bar</a><ul>
+<li>
+<a href="#bar-baz">Bar-Baz</a></li>
+</ul>
+</li>
+</ul>
+<h1 id="foo-bar">Foo-Bar</h1>
+<h2 id="bar-baz">Bar-Baz</h2>
+//= = = = = = = = = = = = = = = = = = = = = = = =//
