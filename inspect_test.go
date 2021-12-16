@@ -133,6 +133,18 @@ func TestInspect(t *testing.T) {
 				item("G", "g"),
 			},
 		},
+		{
+			desc: "escaped punctuation in title",
+			give: []string{
+				`# Foo\-Bar`,
+				`## Bar\-Baz`,
+			},
+			want: Items{
+				item("Foo-Bar", "foo-bar",
+					item("Bar-Baz", "bar-baz"),
+				),
+			},
+		},
 	}
 
 	for _, tt := range tests {
