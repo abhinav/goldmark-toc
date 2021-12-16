@@ -59,6 +59,7 @@ func (r *ListRenderer) renderItem(n *Item) ast.Node {
 
 	if t := n.Title; len(t) > 0 {
 		title := ast.NewString(t)
+		title.SetRaw(true)
 		if len(n.ID) > 0 {
 			link := ast.NewLink()
 			link.Destination = append([]byte("#"), n.ID...)
