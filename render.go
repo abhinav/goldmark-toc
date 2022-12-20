@@ -14,17 +14,17 @@ func RenderList(toc *TOC) ast.Node {
 //
 // For example,
 //
-//  # Foo
-//  ## Bar
-//  ## Baz
-//  # Qux
+//	# Foo
+//	## Bar
+//	## Baz
+//	# Qux
 //
 // Becomes,
 //
-//  - Foo
-//    - Bar
-//    - Baz
-//  - Qux
+//   - Foo
+//   - Bar
+//   - Baz
+//   - Qux
 type ListRenderer struct {
 	// Marker for elements of the list, e.g. '-', '*', etc.
 	//

@@ -3,10 +3,10 @@ package toc_test
 import (
 	"os"
 
-	toc "github.com/abhinav/goldmark-toc"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/text"
+	"go.abhg.dev/goldmark/toc"
 )
 
 func Example() {

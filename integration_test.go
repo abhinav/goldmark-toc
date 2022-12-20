@@ -3,10 +3,10 @@ package toc_test
 import (
 	"testing"
 
-	toc "github.com/abhinav/goldmark-toc"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/parser"
 	goldtestutil "github.com/yuin/goldmark/testutil"
+	"go.abhg.dev/goldmark/toc"
 )
 
 func TestIntegration(t *testing.T) {

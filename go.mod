@@ -1,4 +1,4 @@
-module github.com/abhinav/goldmark-toc
+module go.abhg.dev/goldmark/toc
 
 go 1.16
 
