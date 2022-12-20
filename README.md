@@ -1,4 +1,4 @@
-[![Go Reference](https://pkg.go.dev/badge/github.com/abhinav/goldmark-toc.svg)](https://pkg.go.dev/github.com/abhinav/goldmark-toc)
+[![Go Reference](https://pkg.go.dev/badge/go.abhg.dev/goldmark/toc.svg)](https://pkg.go.dev/go.abhg.dev/goldmark/toc)
 [![Go](https://github.com/abhinav/goldmark-toc/actions/workflows/go.yml/badge.svg)](https://github.com/abhinav/goldmark-toc/actions/workflows/go.yml)
 [![codecov](https://codecov.io/gh/abhinav/goldmark-toc/branch/main/graph/badge.svg?token=OLXTVHEIOG)](https://codecov.io/gh/abhinav/goldmark-toc)
 
@@ -12,7 +12,7 @@ for rendering a table-of-contents.
 To use goldmark-toc, import the `toc` package.
 
 ```go
-import toc "github.com/abhinav/goldmark-toc"
+import "go.abhg.dev/goldmark/toc"
 ```
 
 Following that, you have three options for using this package:

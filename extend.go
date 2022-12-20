@@ -11,15 +11,15 @@ import (
 //
 // To use this, install it into your Goldmark Markdown object.
 //
-//   md := goldmark.New(
-//     // ...
-//     goldmark.WithParserOptions(parser.WithAutoHeadingID()),
-//     goldmark.WithExtensions(
-//       // ...
-//       &toc.Extender{
-//       },
-//     ),
-//   )
+//	md := goldmark.New(
+//	  // ...
+//	  goldmark.WithParserOptions(parser.WithAutoHeadingID()),
+//	  goldmark.WithExtensions(
+//	    // ...
+//	    &toc.Extender{
+//	    },
+//	  ),
+//	)
 //
 // This will install the default Transformer. For more control, install the
 // Transformer directly on the Markdown Parser.
