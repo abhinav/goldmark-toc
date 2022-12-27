@@ -1,3 +1,5 @@
+# goldmark-toc
+
 [![Go Reference](https://pkg.go.dev/badge/go.abhg.dev/goldmark/toc.svg)](https://pkg.go.dev/go.abhg.dev/goldmark/toc)
 [![Go](https://github.com/abhinav/goldmark-toc/actions/workflows/go.yml/badge.svg)](https://github.com/abhinav/goldmark-toc/actions/workflows/go.yml)
 [![codecov](https://codecov.io/gh/abhinav/goldmark-toc/branch/main/graph/badge.svg?token=OLXTVHEIOG)](https://codecov.io/gh/abhinav/goldmark-toc)
@@ -7,7 +9,13 @@ for rendering a table-of-contents.
 
   [goldmark]: http://github.com/yuin/goldmark
 
-# Usage
+## Installation
+
+```bash
+go get go.abhg.dev/goldmark/toc@latest
+```
+
+## Usage
 
 To use goldmark-toc, import the `toc` package.
 
@@ -28,7 +36,7 @@ Following that, you have three options for using this package:
   [Transformer]: #transformer
   [Manual]: #manual
 
-## Extension
+### Extension
 
 To use this package as a simple Goldmark extension, install the `Extender`
 when constructing the `goldmark.Markdown` object.
@@ -51,7 +59,7 @@ document parsed by this Markdown object.
 > a custom implementation of `parser.IDs`, none of the headings in the
 > document will have links generated for them.
 
-## Transformer
+### Transformer
 
 Installing this package as an AST Transformer provides slightly more control
 over the output. To use it, install the AST transformer on the Goldmark
@@ -75,12 +83,12 @@ parsed by this parser.
 As with the previous example, this enables `parser.WithAutoHeadingID` to get
 auto-generated heading IDs.
 
-## Manual
+### Manual
 
 If you use this package manually to generate Tables of Contents, you have a
 lot more control over the behavior. This requires a few steps.
 
-### Parse Markdown
+#### Parse Markdown
 
 Parse a Markdown document with goldmark.
 
@@ -104,7 +112,7 @@ pctx := parser.NewContext(parser.WithIDs(ids))
 doc := parser.Parse(text.NewReader(src), parser.WithContext(pctx))
 ```
 
-### Build a table of contents
+#### Build a table of contents
 
 After parsing a Markdown document, inspect it with `toc`.
 
@@ -115,7 +123,7 @@ if err != nil {
 }
 ```
 
-### Generate a Markdown list
+#### Generate a Markdown list
 
 You can render the table of contents into a Markdown list with
 `toc.RenderList`.
@@ -129,7 +137,7 @@ Markdown or HTML.
 
 You may manipulate the `tree` before rendering the list.
 
-### Render HTML
+#### Render HTML
 
 Finally, render this table of contents along with your Markdown document:
 
