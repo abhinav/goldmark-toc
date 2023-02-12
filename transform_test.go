@@ -28,7 +28,7 @@ func TestTransformer(t *testing.T) {
 	}{
 		{
 			desc:      "default title",
-			wantTitle: _defaultTitle,
+			wantTitle: "Table of Contents",
 		},
 		{
 			desc:      "custom title",
