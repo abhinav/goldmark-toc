@@ -5,61 +5,63 @@
 // inspection, the package analyzes an existing Markdown document, and builds
 // a Table of Contents from it.
 //
-//  markdown := goldmark.New(...)
+//	markdown := goldmark.New(...)
 //
-//  parser := markdown.Parser()
-//  doc := parser.Parse(text.NewReader(src))
-//  tocTree, err := toc.Inspect(doc, src)
+//	parser := markdown.Parser()
+//	doc := parser.Parse(text.NewReader(src))
+//	tocTree, err := toc.Inspect(doc, src)
 //
 // During rendering, it converts the Table of Contents into a list of headings
 // with nested items under each as a goldmark Markdown document. You may
 // manipulate the TOC, removing items from it or simplifying it, before
 // rendering.
 //
-//  tocList := toc.RenderList(tocTree)
+//	tocList := toc.RenderList(tocTree)
 //
 // You can render that Markdown document using goldmark into whatever form you
 // prefer.
 //
-//  renderer := markdown.Renderer()
-//  renderer.Render(out, src, tocList)
+//	renderer := markdown.Renderer()
+//	renderer.Render(out, src, tocList)
 //
 // The following diagram summarizes the flow of information with goldmark-toc.
 //
-//      src
-//   +--------+                           +-------------------+
-//   |        |   goldmark/Parser.Parse   |                   |
-//   | []byte :---------------------------> goldmark/ast.Node |
-//   |        |                           |                   |
-//   +---.----+                           +-------.-----.-----+
-//       |                                        |     |
-//       '----------------.     .-----------------'     |
-//                         \   /                        |
-//                          \ /                         |
-//                           |                          |
-//                           | toc.Inspect              |
-//                           |                          |
-//                      +----v----+                     |
-//                      |         |                     |
-//                      | toc.TOC |                     |
-//                      |         |                     |
-//                      +----.----+                     |
-//                           |                          |
-//                           | toc/Renderer.Render      |
-//                           |                          |
-//                 +---------v---------+                |
-//                 |                   |                |
-//                 | goldmark/ast.Node |                |
-//                 |                   |                |
-//                 +---------.---------+                |
-//                           |                          |
-//                           '-------.   .--------------'
-//                                    \ /
-//                                     |
-//            goldmark/Renderer.Render |
-//                                     |
-//                                     v
-//                                 +------+
-//                                 | HTML |
-//                                 +------+
+//	   src
+//	+--------+                           +-------------------+
+//	|        |   goldmark/Parser.Parse   |                   |
+//	| []byte :---------------------------> goldmark/ast.Node |
+//	|        |                           |                   |
+//	+---.----+                           +-------.-----.-----+
+//	    |                                        |     |
+//	    '----------------.     .-----------------'     |
+//	                      \   /                        |
+//	                       \ /                         |
+//	                        |                          |
+//	                        | toc.Inspect              |
+//	                        |                          |
+//	                   +----v----+                     |
+//	                   |         |                     |
+//	                   | toc.TOC |                     |
+//	                   |         |                     |
+//	                   +----.----+                     |
+//	                        |                          |
+//	                        | toc/Renderer.Render      |
+//	                        |                          |
+//	              +---------v---------+                |
+//	              |                   |                |
+//	              | goldmark/ast.Node |                |
+//	              |                   |                |
+//	              +---------.---------+                |
+//	                        |                          |
+//	                        '-------.   .--------------'
+//	                                 \ /
+//	                                  |
+//	         goldmark/Renderer.Render |
+//	                                  |
+//	                                  v
+//	                              +------+
+//	                              | HTML |
+//	                              +------+
+//
+// Deprecated: Use "go.abhg.dev/goldmark/toc" instead.
 package toc
