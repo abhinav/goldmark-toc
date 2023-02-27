@@ -9,6 +9,10 @@ for rendering a table-of-contents.
 
   [goldmark]: http://github.com/yuin/goldmark
 
+**Demo**:
+A web-based demonstration of the extension is available at
+<https://abhinav.github.io/goldmark-toc/demo/>.
+
 ## Installation
 
 ```bash
