@@ -19,12 +19,12 @@ func RenderList(toc *TOC) ast.Node {
 //	## Baz
 //	# Qux
 //
-// Becomes,
+//	// becomes
 //
-//   - Foo
-//   - Bar
-//   - Baz
-//   - Qux
+//	- Foo
+//	  - Bar
+//	  - Baz
+//	- Qux
 type ListRenderer struct {
 	// Marker for elements of the list, e.g. '-', '*', etc.
 	//

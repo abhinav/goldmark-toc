@@ -74,6 +74,21 @@ set the `Title` field of `Extender`.
 }
 ```
 
+#### Limiting the Table of Contents
+
+By default, goldmark-toc will include all headers in the table of contents.
+If you want to limit the depth of the table of contents,
+use the `MaxDepth` field.
+
+```go
+&toc.Extender{
+  MaxDepth: 3,
+}
+```
+
+Headers with a level higher than the specified value
+will not be included in the table of contents.
+
 ### Transformer
 
 Installing this package as an AST Transformer provides slightly more control
@@ -136,6 +151,13 @@ tree, err := toc.Inspect(doc, src)
 if err != nil {
   // handle the error
 }
+```
+
+If you need to limit the depth of the table of contents,
+use the `MaxDepth` option.
+
+```go
+tree, err := toc.Inspect(doc, src, toc.MaxDepth(3))
 ```
 
 #### Generate a Markdown list

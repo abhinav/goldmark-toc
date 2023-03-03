@@ -1,16 +1,67 @@
 package toc
 
 import (
+	"fmt"
+
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/util"
 )
 
 // InspectOption customizes the behavior of Inspect.
-//
-// This type is currently just a placeholder to prevent breaking changes to
-// the API in the future. There are no InspectOptions at this time.
 type InspectOption interface {
-	unimplemented()
+	apply(*inspectOptions)
+}
+
+type inspectOptions struct {
+	maxDepth int
+}
+
+// MaxDepth limits the depth of the table of contents.
+// Headings with a level greater than the specified depth will be ignored.
+//
+// For example, given the following:
+//
+//	# Foo
+//	## Bar
+//	### Baz
+//	# Quux
+//	## Qux
+//
+// MaxDepth(1) will result in the following:
+//
+//	TOC{Items: ...}
+//	 |
+//	 +--- &Item{Title: "Foo", ID: "foo"}
+//	 |
+//	 +--- &Item{Title: "Quux", ID: "quux", Items: ...}
+//
+// Whereas, MaxDepth(2) will result in the following:
+//
+//	TOC{Items: ...}
+//	 |
+//	 +--- &Item{Title: "Foo", ID: "foo", Items: ...}
+//	 |     |
+//	 |     +--- &Item{Title: "Bar", ID: "bar"}
+//	 |
+//	 +--- &Item{Title: "Quux", ID: "quux", Items: ...}
+//	       |
+//	       +--- &Item{Title: "Qux", ID: "qux"}
+//
+// A value of 0 or less will result in no limit.
+//
+// The default is no limit.
+func MaxDepth(depth int) InspectOption {
+	return maxDepthOption(depth)
+}
+
+type maxDepthOption int
+
+func (d maxDepthOption) apply(opts *inspectOptions) {
+	opts.maxDepth = int(d)
+}
+
+func (d maxDepthOption) String() string {
+	return fmt.Sprintf("MaxDepth(%d)", int(d))
 }
 
 // Inspect builds a table of contents by inspecting the provided document.
@@ -44,13 +95,22 @@ type InspectOption interface {
 //	 +--- &Item{Title: "Section 3", ID: "section-3"}
 //
 // You may analyze or manipulate the table of contents before rendering it.
-func Inspect(n ast.Node, src []byte, opts ...InspectOption) (*TOC, error) {
+func Inspect(n ast.Node, src []byte, options ...InspectOption) (*TOC, error) {
+	var opts inspectOptions
+	for _, opt := range options {
+		opt.apply(&opts)
+	}
+
+	// Appends an empty subitem to the given node
+	// and returns a reference to it.
 	appendChild := func(n *Item) *Item {
 		child := new(Item)
 		n.Items = append(n.Items, child)
 		return child
 	}
 
+	// Returns the last subitem of the given node,
+	// creating it if necessary.
 	lastChild := func(n *Item) *Item {
 		if len(n.Items) > 0 {
 			return n.Items[len(n.Items)-1]
@@ -69,6 +129,10 @@ func Inspect(n ast.Node, src []byte, opts ...InspectOption) (*TOC, error) {
 		heading, ok := n.(*ast.Heading)
 		if !ok {
 			return ast.WalkContinue, nil
+		}
+
+		if opts.maxDepth > 0 && heading.Level > opts.maxDepth {
+			return ast.WalkSkipChildren, nil
 		}
 
 		for len(stack) < heading.Level {

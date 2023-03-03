@@ -23,6 +23,8 @@ func TestIntegration(t *testing.T) {
 		Give  string `yaml:"give"`
 		Want  string `yaml:"want"`
 		Title string `yaml:"title"`
+
+		MaxDepth int `yaml:"maxDepth"`
 	}
 	require.NoError(t, yaml.Unmarshal(testsdata, &tests))
 
@@ -33,7 +35,8 @@ func TestIntegration(t *testing.T) {
 
 			md := goldmark.New(
 				goldmark.WithExtensions(&toc.Extender{
-					Title: tt.Title,
+					Title:    tt.Title,
+					MaxDepth: tt.MaxDepth,
 				}),
 				goldmark.WithParserOptions(parser.WithAutoHeadingID()),
 			)
