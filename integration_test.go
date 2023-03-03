@@ -19,21 +19,24 @@ func TestIntegration(t *testing.T) {
 	require.NoError(t, err)
 
 	var tests []struct {
-		Desc string `yaml:"desc"`
-		Give string `yaml:"give"`
-		Want string `yaml:"want"`
+		Desc  string `yaml:"desc"`
+		Give  string `yaml:"give"`
+		Want  string `yaml:"want"`
+		Title string `yaml:"title"`
 	}
 	require.NoError(t, yaml.Unmarshal(testsdata, &tests))
-
-	md := goldmark.New(
-		goldmark.WithExtensions(&toc.Extender{}),
-		goldmark.WithParserOptions(parser.WithAutoHeadingID()),
-	)
 
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.Desc, func(t *testing.T) {
 			t.Parallel()
+
+			md := goldmark.New(
+				goldmark.WithExtensions(&toc.Extender{
+					Title: tt.Title,
+				}),
+				goldmark.WithParserOptions(parser.WithAutoHeadingID()),
+			)
 
 			var buf bytes.Buffer
 			require.NoError(t, md.Convert([]byte(tt.Give), &buf))

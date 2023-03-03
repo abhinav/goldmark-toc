@@ -28,14 +28,19 @@ import (
 // need to enable the WithAutoHeadingID option on the parser to generate IDs
 // and links for headings.
 type Extender struct {
+	// Title is the title of the table of contents section.
+	// Defaults to "Table of Contents" if unspecified.
+	Title string
 }
 
 // Extend adds support for rendering a table of contents to the provided
 // Markdown parser/renderer.
-func (*Extender) Extend(md goldmark.Markdown) {
+func (e *Extender) Extend(md goldmark.Markdown) {
 	md.Parser().AddOptions(
 		parser.WithASTTransformers(
-			util.Prioritized(&Transformer{}, 100),
+			util.Prioritized(&Transformer{
+				Title: e.Title,
+			}, 100),
 		),
 	)
 }
