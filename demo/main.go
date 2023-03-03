@@ -12,23 +12,41 @@ import (
 )
 
 func main() {
-	js.Global().Set("formatMarkdown", js.FuncOf(formatMarkdown))
+	js.Global().Set("formatMarkdown", js.FuncOf(func(this js.Value, args []js.Value) any {
+		var req request
+		req.Decode(args[0])
+		return formatMarkdown(req)
+	}))
 	select {}
 }
 
-func formatMarkdown(this js.Value, args []js.Value) any {
-	input := args[0].String()
+type request struct {
+	Markdown string
+	Title    string
+	MaxDepth int
+}
+
+func (r *request) Decode(v js.Value) {
+	r.Markdown = v.Get("markdown").String()
+	r.Title = v.Get("title").String()
+	r.MaxDepth = v.Get("maxDepth").Int()
+}
+
+func formatMarkdown(req request) string {
 	md := goldmark.New(
 		goldmark.WithParserOptions(
 			parser.WithAutoHeadingID(),
 		),
 		goldmark.WithExtensions(
-			&toc.Extender{},
+			&toc.Extender{
+				Title:    req.Title,
+				MaxDepth: req.MaxDepth,
+			},
 		),
 	)
 
 	var buf bytes.Buffer
-	if err := md.Convert([]byte(input), &buf); err != nil {
+	if err := md.Convert([]byte(req.Markdown), &buf); err != nil {
 		return err.Error()
 	}
 	return buf.String()
