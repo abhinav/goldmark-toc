@@ -1,6 +1,7 @@
 package toc
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 
@@ -30,6 +31,7 @@ func TestInspect(t *testing.T) {
 	tests := []struct {
 		desc string
 		give []string // lines of a doc
+		opts []InspectOption
 		want Items
 	}{
 		{
@@ -145,6 +147,27 @@ func TestInspect(t *testing.T) {
 				),
 			},
 		},
+		{
+			desc: "depth",
+			give: []string{
+				"# A",
+				"###### B",
+				"### C",
+				"##### D",
+				"## E",
+				"# F",
+				"# G",
+			},
+			opts: []InspectOption{MaxDepth(3)},
+			want: Items{
+				item("A", "a",
+					item("", "",
+						item("C", "c")),
+					item("E", "e")),
+				item("F", "f"),
+				item("G", "g"),
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -159,9 +182,31 @@ func TestInspect(t *testing.T) {
 				parser.WithAutoHeadingID(),
 			).Parse(text.NewReader(src))
 
-			got, err := Inspect(doc, src)
+			got, err := Inspect(doc, src, tt.opts...)
 			require.NoError(t, err, "inspect error")
 			assert.Equal(t, &TOC{Items: tt.want}, got)
+		})
+	}
+}
+
+func TestInspectOption_String(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		give InspectOption
+		want string
+	}{
+		{give: MaxDepth(3), want: "MaxDepth(3)"},
+		{give: MaxDepth(0), want: "MaxDepth(0)"},
+		{give: MaxDepth(-1), want: "MaxDepth(-1)"},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.want, func(t *testing.T) {
+			t.Parallel()
+
+			assert.Equal(t, tt.want, fmt.Sprint(tt.give))
 		})
 	}
 }

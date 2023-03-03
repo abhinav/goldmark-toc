@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Extender: Add Title field to change the Table of Contents title.
+- Inspect: Add MaxDepth option to limit the depth of the Table of Contents.
 
 ## [0.3.0] - 2022-12-19
 ### Changed

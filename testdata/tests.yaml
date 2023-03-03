@@ -106,3 +106,26 @@
     </ul>
     <h1 id="hello">Hello</h1>
     <p>World</p>
+
+- desc: maxDepth
+  maxDepth: 1
+  give: |
+    # Foo
+
+    ## Bar
+
+    # Baz
+
+    ### Qux
+  want: |
+    <h1>Table of Contents</h1>
+    <ul>
+    <li>
+    <a href="#foo">Foo</a></li>
+    <li>
+    <a href="#baz">Baz</a></li>
+    </ul>
+    <h1 id="foo">Foo</h1>
+    <h2 id="bar">Bar</h2>
+    <h1 id="baz">Baz</h1>
+    <h3 id="qux">Qux</h3>
