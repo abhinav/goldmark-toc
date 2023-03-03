@@ -91,3 +91,18 @@
     <a href="#formatted-header">Formatted header</a></li>
     </ul>
     <h1 id="formatted-header"><strong>Formatted</strong> <code>header</code></h1>
+
+- desc: title change
+  title: Contents
+  give: |
+    # Hello
+
+    World
+  want: |
+    <h1>Contents</h1>
+    <ul>
+    <li>
+    <a href="#hello">Hello</a></li>
+    </ul>
+    <h1 id="hello">Hello</h1>
+    <p>World</p>

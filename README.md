@@ -63,11 +63,22 @@ document parsed by this Markdown object.
 > a custom implementation of `parser.IDs`, none of the headings in the
 > document will have links generated for them.
 
+#### Changing the title
+
+If you want to use a title other than "Table of Contents",
+set the `Title` field of `Extender`.
+
+```go
+&toc.Extender{
+  Title: "Contents",
+}
+```
+
 ### Transformer
 
 Installing this package as an AST Transformer provides slightly more control
-over the output. To use it, install the AST transformer on the Goldmark
-Markdown parser.
+over the output.
+To use it, install the AST transformer on the Goldmark Markdown parser.
 
 ```go
 markdown := goldmark.New(...)
