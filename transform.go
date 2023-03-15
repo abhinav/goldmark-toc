@@ -41,7 +41,7 @@ var _ parser.ASTTransformer = (*Transformer)(nil) // interface compliance
 //
 // Errors encountered while transforming are ignored. For more fine-grained
 // control, use Inspect and transform the document manually.
-func (t *Transformer) Transform(doc *ast.Document, reader text.Reader, pctx parser.Context) {
+func (t *Transformer) Transform(doc *ast.Document, reader text.Reader, _ parser.Context) {
 	toc, err := Inspect(doc, reader.Source(), MaxDepth(t.MaxDepth))
 	if err != nil {
 		// There are currently no scenarios under which Inspect
