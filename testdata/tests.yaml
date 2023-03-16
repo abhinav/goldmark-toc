@@ -146,3 +146,34 @@
     </ul>
     <h1 id="hello">Hello</h1>
     <h1 id="world">World</h1>
+
+# From https://github.com/abhinav/goldmark-toc/issues/42
+- desc: compact single
+  compact: true
+  give: |
+    ### h3
+  want: |
+    <h1>Table of Contents</h1>
+    <ul>
+    <li>
+    <a href="#h3">h3</a></li>
+    </ul>
+    <h3 id="h3">h3</h3>
+
+- desc: compact multiple
+  compact: true
+  give: |
+    # h1
+    ### h3
+  want: |
+    <h1>Table of Contents</h1>
+    <ul>
+    <li>
+    <a href="#h1">h1</a><ul>
+    <li>
+    <a href="#h3">h3</a></li>
+    </ul>
+    </li>
+    </ul>
+    <h1 id="h1">h1</h1>
+    <h3 id="h3">h3</h3>

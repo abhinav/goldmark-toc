@@ -1,7 +1,9 @@
 package toc
 
 import (
+	"bytes"
 	"fmt"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -9,6 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/text"
+	"pgregory.net/rapid"
 )
 
 func item(title, id string, items ...*Item) *Item {
@@ -168,6 +171,59 @@ func TestInspect(t *testing.T) {
 				item("G", "g"),
 			},
 		},
+		{
+			desc: "compact",
+			give: []string{
+				"# A",
+				"### B",
+				"#### C",
+				"# D",
+				"#### E",
+			},
+			opts: []InspectOption{Compact(true)},
+			want: Items{
+				item("A", "a",
+					item("B", "b",
+						item("C", "c"),
+					),
+				),
+				item("D", "d",
+					item("E", "e"),
+				),
+			},
+		},
+		{
+			desc: "compact complex",
+			give: []string{
+				"## A",
+				"##### B",
+				"###### C",
+				"## D",
+				"# E",
+				"### F",
+				"# G",
+				"#### H",
+				"### I",
+				"## J",
+			},
+			opts: []InspectOption{Compact(true)},
+			want: Items{
+				item("A", "a",
+					item("B", "b",
+						item("C", "c"),
+					),
+				),
+				item("D", "d"),
+				item("E", "e",
+					item("F", "f"),
+				),
+				item("G", "g",
+					item("H", "h"),
+					item("I", "i"),
+					item("J", "j"),
+				),
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -199,6 +255,7 @@ func TestInspectOption_String(t *testing.T) {
 		{give: MaxDepth(3), want: "MaxDepth(3)"},
 		{give: MaxDepth(0), want: "MaxDepth(0)"},
 		{give: MaxDepth(-1), want: "MaxDepth(-1)"},
+		{give: Compact(true), want: "Compact(true)"},
 	}
 
 	for _, tt := range tests {
@@ -209,4 +266,100 @@ func TestInspectOption_String(t *testing.T) {
 			assert.Equal(t, tt.want, fmt.Sprint(tt.give))
 		})
 	}
+}
+
+func TestInspectRandomHeadings(t *testing.T) {
+	t.Parallel()
+
+	rapid.Check(t, testInspectRandomHeadings)
+}
+
+func FuzzInspectRandomHeadings(f *testing.F) {
+	f.Fuzz(rapid.MakeFuzz(testInspectRandomHeadings))
+}
+
+func testInspectRandomHeadings(t *rapid.T) {
+	// Generate a random hierarchy.
+	levels := rapid.SliceOf(rapid.IntRange(1, 6)).Draw(t, "levels")
+	var buf bytes.Buffer
+	for i, level := range levels {
+		buf.WriteString(strings.Repeat("#", level))
+		buf.WriteString(" Heading ")
+		buf.WriteString(strconv.Itoa(i))
+		buf.WriteByte('\n')
+	}
+
+	src := buf.Bytes()
+	doc := parser.NewParser(
+		parser.WithInlineParsers(parser.DefaultInlineParsers()...),
+		parser.WithBlockParsers(parser.DefaultBlockParsers()...),
+		parser.WithAutoHeadingID(),
+	).Parse(text.NewReader(src))
+
+	toc, err := Inspect(doc, src)
+	require.NoError(t, err, "inspect error")
+
+	// Verify that the number of items in the TOC is the same as the number
+	// of headings in the document.
+	assert.Equal(t, len(levels), nonEmptyItems(toc.Items),
+		"number of non-empty items in TOC "+
+			"does not match number of headings in document:\n%s", src)
+}
+
+func TestInspectCompactRandomHeadings(t *testing.T) {
+	t.Parallel()
+
+	rapid.Check(t, testInspectCompactRandomHeadings)
+}
+
+func FuzzInspectCompactRandomHeadings(f *testing.F) {
+	f.Fuzz(rapid.MakeFuzz(testInspectCompactRandomHeadings))
+}
+
+func testInspectCompactRandomHeadings(t *rapid.T) {
+	// Generate a random hierarchy.
+	levels := rapid.SliceOf(rapid.IntRange(1, 6)).Draw(t, "levels")
+	var buf bytes.Buffer
+	for i, level := range levels {
+		buf.WriteString(strings.Repeat("#", level))
+		buf.WriteString(" Heading ")
+		buf.WriteString(strconv.Itoa(i))
+		buf.WriteByte('\n')
+	}
+
+	src := buf.Bytes()
+	doc := parser.NewParser(
+		parser.WithInlineParsers(parser.DefaultInlineParsers()...),
+		parser.WithBlockParsers(parser.DefaultBlockParsers()...),
+		parser.WithAutoHeadingID(),
+	).Parse(text.NewReader(src))
+
+	toc, err := Inspect(doc, src, Compact(true))
+	require.NoError(t, err, "inspect error")
+
+	// There must be no empty items in the TOC.
+	assert.Equal(t, nonEmptyItems(toc.Items), totalItems(toc.Items),
+		"number of non-empty items in TOC "+
+			"does not match number of items in TOC:\n%s", src)
+	assert.Equal(t, len(levels), totalItems(toc.Items),
+		"number of items in TOC "+
+			"does not match number of headings in document:\n%s", src)
+}
+
+func totalItems(items Items) (total int) {
+	for _, item := range items {
+		total++
+		total += totalItems(item.Items)
+	}
+	return total
+}
+
+func nonEmptyItems(items Items) (total int) {
+	for _, item := range items {
+		if len(item.Title) > 0 {
+			total++
+		}
+		total += nonEmptyItems(item.Items)
+	}
+	return total
 }

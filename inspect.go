@@ -14,6 +14,7 @@ type InspectOption interface {
 
 type inspectOptions struct {
 	maxDepth int
+	compact  bool
 }
 
 // MaxDepth limits the depth of the table of contents.
@@ -62,6 +63,67 @@ func (d maxDepthOption) apply(opts *inspectOptions) {
 
 func (d maxDepthOption) String() string {
 	return fmt.Sprintf("MaxDepth(%d)", int(d))
+}
+
+// Compact instructs Inspect to remove empty items from the table of contents.
+// Children of removed items will be promoted to the parent item.
+//
+// For example, given the following:
+//
+//	# A
+//	### B
+//	#### C
+//	# D
+//	#### E
+//
+// Compact(false), which is the default, will result in the following:
+//
+//	TOC{Items: ...}
+//	 |
+//	 +--- &Item{Title: "A", ...}
+//	 |     |
+//	 |     +--- &Item{Title: "", ...}
+//	 |           |
+//	 |           +--- &Item{Title: "B", ...}
+//	 |                 |
+//	 |                 +--- &Item{Title: "C"}
+//	 |
+//	 +--- &Item{Title: "D", ...}
+//	       |
+//	       +--- &Item{Title: "", ...}
+//	             |
+//	             +--- &Item{Title: "", ...}
+//	                   |
+//	                   +--- &Item{Title: "E", ...}
+//
+// Whereas, Compact(true) will result in the following:
+//
+//	TOC{Items: ...}
+//	 |
+//	 +--- &Item{Title: "A", ...}
+//	 |     |
+//	 |     +--- &Item{Title: "B", ...}
+//	 |           |
+//	 |           +--- &Item{Title: "C"}
+//	 |
+//	 +--- &Item{Title: "D", ...}
+//	       |
+//	       +--- &Item{Title: "E", ...}
+//
+// Notice that the empty items have been removed
+// and the generated TOC is more compact.
+func Compact(compact bool) InspectOption {
+	return compactOption(compact)
+}
+
+type compactOption bool
+
+func (c compactOption) apply(opts *inspectOptions) {
+	opts.compact = bool(c)
+}
+
+func (c compactOption) String() string {
+	return fmt.Sprintf("Compact(%v)", bool(c))
 }
 
 // Inspect builds a table of contents by inspecting the provided document.
@@ -121,7 +183,7 @@ func Inspect(n ast.Node, src []byte, options ...InspectOption) (*TOC, error) {
 
 	var root Item
 
-	stack := []*Item{&root}
+	stack := []*Item{&root} // inv: len(stack) >= 1
 	err := ast.Walk(n, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
 		if !entering {
 			return ast.WalkContinue, nil
@@ -136,13 +198,17 @@ func Inspect(n ast.Node, src []byte, options ...InspectOption) (*TOC, error) {
 			return ast.WalkSkipChildren, nil
 		}
 
+		// The heading is deeper than the current depth.
+		// Append empty items to match the heading's level.
 		for len(stack) < heading.Level {
 			parent := stack[len(stack)-1]
 			stack = append(stack, lastChild(parent))
 		}
 
-		for len(stack) > heading.Level {
-			stack = stack[:len(stack)-1]
+		// The heading is shallower than the current depth.
+		// Move back up the stack until we reach the heading's level.
+		if len(stack) > heading.Level {
+			stack = stack[:heading.Level]
 		}
 
 		parent := stack[len(stack)-1]
@@ -159,5 +225,31 @@ func Inspect(n ast.Node, src []byte, options ...InspectOption) (*TOC, error) {
 		return ast.WalkSkipChildren, nil
 	})
 
+	if opts.compact {
+		compactItems(&root.Items)
+	}
+
 	return &TOC{Items: root.Items}, err
+}
+
+// compactItems removes items with no titles
+// from the given list of items.
+//
+// Children of removed items will be promoted to the parent item.
+func compactItems(items *Items) {
+	for i := 0; i < len(*items); i++ {
+		item := (*items)[i]
+		if len(item.Title) > 0 {
+			compactItems(&item.Items)
+			continue
+		}
+
+		children := item.Items
+		newItems := make(Items, 0, len(*items)-1+len(children))
+		newItems = append(newItems, (*items)[:i]...)
+		newItems = append(newItems, children...)
+		newItems = append(newItems, (*items)[i+1:]...)
+		*items = newItems
+		i-- // start with first child
+	}
 }

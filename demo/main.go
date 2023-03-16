@@ -24,12 +24,14 @@ type request struct {
 	Markdown string
 	Title    string
 	MaxDepth int
+	Compact  bool
 }
 
 func (r *request) Decode(v js.Value) {
 	r.Markdown = v.Get("markdown").String()
 	r.Title = v.Get("title").String()
 	r.MaxDepth = v.Get("maxDepth").Int()
+	r.Compact = v.Get("compact").Bool()
 }
 
 func formatMarkdown(req request) string {
@@ -41,6 +43,7 @@ func formatMarkdown(req request) string {
 			&toc.Extender{
 				Title:    req.Title,
 				MaxDepth: req.MaxDepth,
+				Compact:  req.Compact,
 			},
 		),
 	)
