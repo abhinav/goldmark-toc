@@ -13,6 +13,8 @@ import (
 )
 
 func TestTransformer(t *testing.T) {
+	t.Parallel()
+
 	src := []byte(strings.Join([]string{
 		"# Foo",
 		"## Bar",
