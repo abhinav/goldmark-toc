@@ -47,7 +47,9 @@ Bye
 	treeList := toc.RenderList(tree)
 
 	// Render the Markdown list into HTML.
-	markdown.Renderer().Render(os.Stdout, src, treeList)
+	if err := markdown.Renderer().Render(os.Stdout, src, treeList); err != nil {
+		panic(err)
+	}
 
 	// Output:
 	// <ul>
