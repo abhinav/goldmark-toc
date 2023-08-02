@@ -4,6 +4,8 @@ package toc
 // rest of the table of contents resides.
 type TOC struct {
 	// Items holds the top-level headings under the table of contents.
+	//
+	// Items is empty if there are no headings in the document.
 	Items Items
 }
 

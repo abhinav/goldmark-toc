@@ -16,6 +16,10 @@
 // manipulate the TOC, removing items from it or simplifying it, before
 // rendering.
 //
+//	if len(tocTree.Items) == 0 {
+//		// No headings in the document.
+//		return
+//	}
 //	tocList := toc.RenderList(tocTree)
 //
 // You can render that Markdown document using goldmark into whatever form you

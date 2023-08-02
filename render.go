@@ -6,6 +6,9 @@ const _defaultMarker = '*'
 
 // RenderList renders a table of contents as a nested list with a sane,
 // default configuration for the ListRenderer.
+//
+// If the TOC is nil or empty, nil is returned.
+// Do not call Goldmark's renderer if the returned node is nil.
 func RenderList(toc *TOC) ast.Node {
 	return new(ListRenderer).Render(toc)
 }
@@ -33,7 +36,13 @@ type ListRenderer struct {
 }
 
 // Render renders the table of contents into Markdown.
+//
+// If the TOC is nil or empty, nil is returned.
+// Do not call Goldmark's renderer if the returned node is nil.
 func (r *ListRenderer) Render(toc *TOC) ast.Node {
+	if toc == nil {
+		return nil
+	}
 	return r.renderItems(toc.Items)
 }
 

@@ -179,8 +179,15 @@ You may manipulate the `tree` before rendering the list.
 Finally, render this table of contents along with your Markdown document:
 
 ```go
-markdown.Renderer().Render(output, src, list) // table of contents
-markdown.Renderer().Render(output, src, doc)  // document
+// Render the table of contents.
+if list != nil {
+    // list will be nil if the table of contents is empty
+    // because there were no headings in the document.
+    markdown.Renderer().Render(output, src, list)
+}
+
+// Render the document.
+markdown.Renderer().Render(output, src, doc)
 ```
 
 Alternatively, include the table of contents into your Markdown document in
@@ -188,7 +195,9 @@ your desired position and render it using your Markdown renderer.
 
 ```go
 // Prepend table of contents to the front of the document.
-doc.InsertBefore(doc, doc.FirstChild(), list)
+if list != nil {
+    doc.InsertBefore(doc, doc.FirstChild(), list)
+}
 
 // Render the document.
 markdown.Renderer().Render(output, src, doc)
