@@ -43,6 +43,11 @@ Bye
 		panic(err)
 	}
 
+	if len(tree.Items) == 0 {
+		return
+		// No table of contents because there are no headers.
+	}
+
 	// Render the tree as-is into a Markdown list.
 	treeList := toc.RenderList(tree)
 

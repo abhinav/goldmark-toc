@@ -237,3 +237,9 @@ func TestRenderList(t *testing.T) {
 		})
 	}
 }
+
+func TestRenderList_nil(t *testing.T) {
+	t.Parallel()
+
+	assert.Nil(t, RenderList(nil))
+}

@@ -68,6 +68,7 @@ func (d maxDepthOption) String() string {
 //
 // The table of contents is represents as a tree where each item represents a
 // heading or a heading level with zero or more children.
+// The returned TOC will be empty if there are no headings in the document.
 //
 // For example,
 //
