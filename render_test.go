@@ -1,9 +1,12 @@
 package toc
 
 import (
+	"bytes"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
 )
 
@@ -236,6 +239,26 @@ func TestRenderList(t *testing.T) {
 			tt.want.Match(t, got)
 		})
 	}
+}
+
+func TestRenderList_id(t *testing.T) {
+	t.Parallel()
+
+	node := RenderList(&TOC{
+		Items: Items{
+			item("Foo", "foo",
+				item("Bar", "bar"),
+				item("Baz", "baz"),
+			),
+		},
+	})
+	node.SetAttribute([]byte("id"), []byte("toc"))
+
+	var buf bytes.Buffer
+	err := goldmark.DefaultRenderer().Render(&buf, nil, node)
+	require.NoError(t, err)
+
+	assert.Contains(t, buf.String(), `<ul id="toc">`)
 }
 
 func TestRenderList_nil(t *testing.T) {
