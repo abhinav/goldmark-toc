@@ -202,3 +202,24 @@ if list != nil {
 // Render the document.
 markdown.Renderer().Render(output, src, doc)
 ```
+
+##### Customize TOC attributes
+
+If you want the rendered TOC to have an id or other attributes,
+use [Node.SetAttribute](https://pkg.go.dev/github.com/yuin/goldmark/ast#Node.SetAttribute)
+on the `ast.Node` returned by `toc.RenderList`.
+
+For example, with the following:
+
+```go
+list := toc.RenderList(tree)
+list.SetAttribute([]byte("id"), []byte("toc"))
+```
+
+The output will take the form:
+
+```html
+<ul id="toc">
+  <!-- ... -->
+</ul>
+```
