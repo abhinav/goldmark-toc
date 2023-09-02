@@ -1,5 +1,0 @@
-kind: Added
-body: |
-  Add a ListID attribute to Extender and Transformer.
-  If set, the rendered `<ul>` will have an `id` attribute with this value.
-time: 2023-09-02T14:42:55.155118683-07:00
