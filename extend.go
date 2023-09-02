@@ -38,6 +38,11 @@ type Extender struct {
 	//
 	// Defaults to 0 (no limit) if unspecified.
 	MaxDepth int
+
+	// ListID is the id for the list of TOC items rendered in the HTML.
+	//
+	// See the documentation for Transformer.ListID for more information.
+	ListID string
 }
 
 // Extend adds support for rendering a table of contents to the provided
@@ -48,6 +53,7 @@ func (e *Extender) Extend(md goldmark.Markdown) {
 			util.Prioritized(&Transformer{
 				Title:    e.Title,
 				MaxDepth: e.MaxDepth,
+				ListID:   e.ListID,
 			}, 100),
 		),
 	)

@@ -33,6 +33,18 @@ type Transformer struct {
 	// MaxDepth is the maximum depth of the table of contents.
 	// See the documentation for MaxDepth for more information.
 	MaxDepth int
+
+	// ListID is the id for the list of TOC items rendered in the HTML.
+	//
+	// For example, if ListID is "toc", the table of contents will be
+	// rendered as:
+	//
+	//	<ul id="toc">
+	//	  ...
+	//	</ul>
+	//
+	// The HTML element does not have an ID if ListID is empty.
+	ListID string
 }
 
 var _ parser.ASTTransformer = (*Transformer)(nil) // interface compliance
@@ -54,7 +66,12 @@ func (t *Transformer) Transform(doc *ast.Document, reader text.Reader, _ parser.
 		return
 	}
 
-	doc.InsertBefore(doc, doc.FirstChild(), RenderList(toc))
+	listNode := RenderList(toc)
+	if id := t.ListID; len(id) > 0 {
+		listNode.SetAttributeString("id", []byte(id))
+	}
+
+	doc.InsertBefore(doc, doc.FirstChild(), listNode)
 
 	title := t.Title
 	if len(title) == 0 {
