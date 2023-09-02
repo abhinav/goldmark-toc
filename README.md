@@ -74,6 +74,25 @@ set the `Title` field of `Extender`.
 }
 ```
 
+#### Adding an ID
+
+If you want the rendered HTML list to include an id,
+set the `ListID` field of `Extender`.
+
+```go
+&toc.Extender{
+  ListID: "toc",
+}
+```
+
+This will render:
+
+```html
+<ul id="toc">
+  <!-- ... -->
+</ul>
+```
+
 #### Limiting the Table of Contents
 
 By default, goldmark-toc will include all headers in the table of contents.

@@ -129,3 +129,20 @@
     <h2 id="bar">Bar</h2>
     <h1 id="baz">Baz</h1>
     <h3 id="qux">Qux</h3>
+
+- desc: list id
+  listID: my-toc
+  give: |
+    # Hello
+
+    # World
+  want: |
+    <h1>Table of Contents</h1>
+    <ul id="my-toc">
+    <li>
+    <a href="#hello">Hello</a></li>
+    <li>
+    <a href="#world">World</a></li>
+    </ul>
+    <h1 id="hello">Hello</h1>
+    <h1 id="world">World</h1>
