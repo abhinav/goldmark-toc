@@ -1,7 +1,7 @@
 # goldmark-toc
 
 [![Go Reference](https://pkg.go.dev/badge/go.abhg.dev/goldmark/toc.svg)](https://pkg.go.dev/go.abhg.dev/goldmark/toc)
-[![Go](https://github.com/abhinav/goldmark-toc/actions/workflows/go.yml/badge.svg)](https://github.com/abhinav/goldmark-toc/actions/workflows/go.yml)
+[![CI](https://github.com/abhinav/goldmark-toc/actions/workflows/ci.yml/badge.svg)](https://github.com/abhinav/goldmark-toc/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/abhinav/goldmark-toc/branch/main/graph/badge.svg?token=OLXTVHEIOG)](https://codecov.io/gh/abhinav/goldmark-toc)
 
 goldmark-toc is an add-on for the [goldmark] Markdown parser that adds support
