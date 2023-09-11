@@ -68,6 +68,9 @@
           <option value="5">5</option>
           <option value="6">6</option>
         </select>
+
+        <label for="compact">Compact</label>
+        <input type="checkbox" id="compact" name="compact" checked />
       </div>
 
       <div class="output-container">
@@ -80,18 +83,21 @@
   <script>
     const input = document.getElementById("input");
     const maxDepth = document.getElementById("maxDepth");
+    const compact = document.getElementById("compact");
     const title = document.getElementById("title");
     const output = document.getElementById("output");
 
     input.addEventListener("input", refresh);
     maxDepth.addEventListener("change", refresh);
     title.addEventListener("input", refresh);
+    compact.addEventListener("change", refresh);
 
     function refresh() {
       output.innerHTML = formatMarkdown({
         markdown: input.value,
         maxDepth: parseInt(maxDepth.value),
         title: title.value,
+        compact: compact.checked,
       });
     }
   </script>

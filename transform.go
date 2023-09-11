@@ -45,6 +45,11 @@ type Transformer struct {
 	//
 	// The HTML element does not have an ID if ListID is empty.
 	ListID string
+
+	// Compact controls whether empty items should be removed
+	// from the table of contents.
+	// See the documentation for Compact for more information.
+	Compact bool
 }
 
 var _ parser.ASTTransformer = (*Transformer)(nil) // interface compliance
@@ -54,7 +59,7 @@ var _ parser.ASTTransformer = (*Transformer)(nil) // interface compliance
 // Errors encountered while transforming are ignored. For more fine-grained
 // control, use Inspect and transform the document manually.
 func (t *Transformer) Transform(doc *ast.Document, reader text.Reader, _ parser.Context) {
-	toc, err := Inspect(doc, reader.Source(), MaxDepth(t.MaxDepth))
+	toc, err := Inspect(doc, reader.Source(), MaxDepth(t.MaxDepth), Compact(t.Compact))
 	if err != nil {
 		// There are currently no scenarios under which Inspect
 		// returns an error but we have to account for it anyway.

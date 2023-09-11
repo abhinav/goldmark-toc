@@ -43,6 +43,12 @@ type Extender struct {
 	//
 	// See the documentation for Transformer.ListID for more information.
 	ListID string
+
+	// Compact controls whether empty items should be removed
+	// from the table of contents.
+	//
+	// See the documentation for Compact for more information.
+	Compact bool
 }
 
 // Extend adds support for rendering a table of contents to the provided
@@ -54,6 +60,7 @@ func (e *Extender) Extend(md goldmark.Markdown) {
 				Title:    e.Title,
 				MaxDepth: e.MaxDepth,
 				ListID:   e.ListID,
+				Compact:  e.Compact,
 			}, 100),
 		),
 	)
