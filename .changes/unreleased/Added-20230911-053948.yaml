@@ -1,4 +1,0 @@
-kind: Added
-body: The new `Compact` option removes empty nodes in the TOC. If you have >1 level
-  of difference between headings, this will render a cleaner TOC.
-time: 2023-09-11T05:39:48.419723018-07:00
