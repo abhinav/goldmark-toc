@@ -58,7 +58,14 @@
         <label for="title">Title</label>
         <input id="title" type="text" value="" />
 
-        <label for="minDepth">Maximum Depth</label>
+        <label for="compact">Compact</label>
+        <input type="checkbox" id="compact" name="compact" checked />
+
+        <br/>
+
+        Depth limit:
+
+        <label for="minDepth">Minimum</label>
         <select id="minDepth" active="after">
           <option value="0" selected>No limit</option>
           <option value="1">1</option>
@@ -69,7 +76,7 @@
           <option value="6">6</option>
         </select>
 
-        <label for="maxDepth">Maximum Depth</label>
+        <label for="maxDepth">Maximum</label>
         <select id="maxDepth" active="after">
           <option value="0" selected>No limit</option>
           <option value="1">1</option>
@@ -80,8 +87,6 @@
           <option value="6">6</option>
         </select>
 
-        <label for="compact">Compact</label>
-        <input type="checkbox" id="compact" name="compact" checked />
       </div>
 
       <div class="output-container">
