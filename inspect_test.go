@@ -175,6 +175,24 @@ func TestInspect(t *testing.T) {
 			},
 		},
 		{
+			desc: "minDepth/compact",
+			give: []string{
+				"# A",
+				"###### B",
+				"### C",
+				"##### D",
+				"## E",
+				"# F",
+				"# G",
+			},
+			opts: []InspectOption{MinDepth(3), Compact(true)},
+			want: Items{
+				item("B", "b"),
+				item("C", "c",
+					item("D", "d")),
+			},
+		},
+		{
 			desc: "maxDepth",
 			give: []string{
 				"# A",
