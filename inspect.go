@@ -13,8 +13,53 @@ type InspectOption interface {
 }
 
 type inspectOptions struct {
+	minDepth int
 	maxDepth int
 	compact  bool
+}
+
+// MinDepth limits the depth of the table of contents.
+// Headings with a level lower than the specified depth will be ignored.
+//
+// For example, given the following:
+//
+//	# Foo
+//	## Bar
+//	### Baz
+//	# Quux
+//	## Qux
+//
+// MinDepth(3) will result in the following:
+//
+//	TOC{Items: ...}
+//	 |
+//	 +--- &Item{Title: "Baz", ID: "baz"}
+//
+// Whereas, MinDepth(2) will result in the following:
+//
+//	TOC{Items: ...}
+//	 |
+//	 +--- &Item{Title: "Bar", ID: "bar", Items: ...}
+//	 |     |
+//	 |     +--- &Item{Title: "Baz", ID: "baz"}
+//	 |
+//	 +--- &Item{Title: "Qux", ID: "qux"}
+//
+// A value of 0 or less will result in no limit.
+//
+// The default is no limit.
+func MinDepth(depth int) InspectOption {
+	return minDepthOption(depth)
+}
+
+type minDepthOption int
+
+func (d minDepthOption) apply(opts *inspectOptions) {
+	opts.minDepth = int(d)
+}
+
+func (d minDepthOption) String() string {
+	return fmt.Sprintf("MinDepth(%d)", int(d))
 }
 
 // MaxDepth limits the depth of the table of contents.
@@ -192,6 +237,9 @@ func Inspect(n ast.Node, src []byte, options ...InspectOption) (*TOC, error) {
 		heading, ok := n.(*ast.Heading)
 		if !ok {
 			return ast.WalkContinue, nil
+		}
+		if opts.minDepth > 0 && heading.Level < opts.minDepth {
+			return ast.WalkSkipChildren, nil
 		}
 
 		if opts.maxDepth > 0 && heading.Level > opts.maxDepth {

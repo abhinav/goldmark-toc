@@ -151,7 +151,31 @@ func TestInspect(t *testing.T) {
 			},
 		},
 		{
-			desc: "depth",
+			desc: "minDepth",
+			give: []string{
+				"# A",
+				"###### B",
+				"### C",
+				"##### D",
+				"## E",
+				"# F",
+				"# G",
+			},
+			opts: []InspectOption{MinDepth(3)},
+			want: Items{
+				item("", "",
+					item("", "",
+						item("", "",
+							item("", "",
+								item("", "",
+									item("B", "b")))),
+						item("C", "c",
+							item("", "",
+								item("D", "d"))))),
+			},
+		},
+		{
+			desc: "maxDepth",
 			give: []string{
 				"# A",
 				"###### B",
@@ -252,6 +276,9 @@ func TestInspectOption_String(t *testing.T) {
 		give InspectOption
 		want string
 	}{
+		{give: MinDepth(3), want: "MinDepth(3)"},
+		{give: MinDepth(0), want: "MinDepth(0)"},
+		{give: MinDepth(-1), want: "MinDepth(-1)"},
 		{give: MaxDepth(3), want: "MaxDepth(3)"},
 		{give: MaxDepth(0), want: "MaxDepth(0)"},
 		{give: MaxDepth(-1), want: "MaxDepth(-1)"},
