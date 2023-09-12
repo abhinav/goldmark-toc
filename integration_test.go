@@ -25,6 +25,7 @@ func TestIntegration(t *testing.T) {
 		Title  string `yaml:"title"`
 		ListID string `yaml:"listID"`
 
+		MinDepth int  `yaml:"minDepth"`
 		MaxDepth int  `yaml:"maxDepth"`
 		Compact  bool `yaml:"compact"`
 	}
@@ -38,6 +39,7 @@ func TestIntegration(t *testing.T) {
 			md := goldmark.New(
 				goldmark.WithExtensions(&toc.Extender{
 					Title:    tt.Title,
+					MinDepth: tt.MinDepth,
 					MaxDepth: tt.MaxDepth,
 					Compact:  tt.Compact,
 					ListID:   tt.ListID,

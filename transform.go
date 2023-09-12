@@ -30,6 +30,10 @@ type Transformer struct {
 	// Defaults to "Table of Contents" if unspecified.
 	Title string
 
+	// MinDepth is the minimum depth of the table of contents.
+	// See the documentation for MinDepth for more information.
+	MinDepth int
+
 	// MaxDepth is the maximum depth of the table of contents.
 	// See the documentation for MaxDepth for more information.
 	MaxDepth int
@@ -59,7 +63,7 @@ var _ parser.ASTTransformer = (*Transformer)(nil) // interface compliance
 // Errors encountered while transforming are ignored. For more fine-grained
 // control, use Inspect and transform the document manually.
 func (t *Transformer) Transform(doc *ast.Document, reader text.Reader, _ parser.Context) {
-	toc, err := Inspect(doc, reader.Source(), MaxDepth(t.MaxDepth), Compact(t.Compact))
+	toc, err := Inspect(doc, reader.Source(), MinDepth(t.MinDepth), MaxDepth(t.MaxDepth), Compact(t.Compact))
 	if err != nil {
 		// There are currently no scenarios under which Inspect
 		// returns an error but we have to account for it anyway.

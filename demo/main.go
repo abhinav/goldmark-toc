@@ -23,6 +23,7 @@ func main() {
 type request struct {
 	Markdown string
 	Title    string
+	MinDepth int
 	MaxDepth int
 	Compact  bool
 }
@@ -30,6 +31,7 @@ type request struct {
 func (r *request) Decode(v js.Value) {
 	r.Markdown = v.Get("markdown").String()
 	r.Title = v.Get("title").String()
+	r.MinDepth = v.Get("minDepth").Int()
 	r.MaxDepth = v.Get("maxDepth").Int()
 	r.Compact = v.Get("compact").Bool()
 }
@@ -42,6 +44,7 @@ func formatMarkdown(req request) string {
 		goldmark.WithExtensions(
 			&toc.Extender{
 				Title:    req.Title,
+				MinDepth: req.MinDepth,
 				MaxDepth: req.MaxDepth,
 				Compact:  req.Compact,
 			},

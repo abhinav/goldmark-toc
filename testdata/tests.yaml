@@ -129,6 +129,34 @@
     <h2 id="bar">Bar</h2>
     <h1 id="baz">Baz</h1>
     <h3 id="qux">Qux</h3>
+- desc: minDepth
+  minDepth: 3
+  give: |
+    # Foo
+
+    ## Bar
+
+    # Baz
+
+    ### Qux
+  want: |
+    <h1>Table of Contents</h1>
+    <ul>
+    <li>
+    <ul>
+    <li>
+    <ul>
+    <li>
+    <a href="#qux">Qux</a></li>
+    </ul>
+    </li>
+    </ul>
+    </li>
+    </ul>
+    <h1 id="foo">Foo</h1>
+    <h2 id="bar">Bar</h2>
+    <h1 id="baz">Baz</h1>
+    <h3 id="qux">Qux</h3>
 
 - desc: list id
   listID: my-toc

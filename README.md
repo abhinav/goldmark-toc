@@ -97,15 +97,16 @@ This will render:
 
 By default, goldmark-toc will include all headers in the table of contents.
 If you want to limit the depth of the table of contents,
-use the `MaxDepth` field.
+use the `MinDepth` and `MaxDepth` field.
 
 ```go
 &toc.Extender{
+  MinDepth: 2,
   MaxDepth: 3,
 }
 ```
 
-Headers with a level higher than the specified value
+Headers with a level lower or higher than the specified values
 will not be included in the table of contents.
 
 #### Compacting the Table of Contents
@@ -210,10 +211,10 @@ if err != nil {
 ```
 
 If you need to limit the depth of the table of contents,
-use the `MaxDepth` option.
+use the `MinDepth` and `MaxDepth` option.
 
 ```go
-tree, err := toc.Inspect(doc, src, toc.MaxDepth(3))
+tree, err := toc.Inspect(doc, src, toc.MinDepth(2), toc.MaxDepth(3))
 ```
 
 #### Generate a Markdown list
