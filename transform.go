@@ -50,16 +50,16 @@ type Transformer struct {
 	// The HTML element does not have an ID if ListID is empty.
 	ListID string
 
-	// HeadingID is the id for the Title heading rendered in the HTML.
+	// TitleID is the id for the Title heading rendered in the HTML.
 	//
-	// For example, if HeadingID is "toc-title",
+	// For example, if TitleID is "toc-title",
 	// the title will be rendered as:
 	//
 	//	<h1 id="toc-title">Table of Contents</h1>
 	//
-	// If HeadingID is empty, a value will be requested
+	// If TitleID is empty, a value will be requested
 	// from the Goldmark Parser.
-	HeadingID string
+	TitleID string
 
 	// Compact controls whether empty items should be removed
 	// from the table of contents.
@@ -101,7 +101,7 @@ func (t *Transformer) Transform(doc *ast.Document, reader text.Reader, ctx parse
 	titleBytes := []byte(title)
 	heading := ast.NewHeading(1)
 	heading.AppendChild(heading, ast.NewString(titleBytes))
-	if id := t.HeadingID; len(id) > 0 {
+	if id := t.TitleID; len(id) > 0 {
 		heading.SetAttributeString("id", []byte(id))
 	} else if ids := ctx.IDs(); ids != nil {
 		id := ids.Generate(titleBytes, heading.Kind())

@@ -74,6 +74,15 @@ set the `Title` field of `Extender`.
 }
 ```
 
+You can specify an ID for the title heading with the `TitleID` option.
+
+```go
+&toc.Extender{
+  Title:   "Contents",
+  TitleID: "toc-header",
+}
+```
+
 #### Adding an ID
 
 If you want the rendered HTML list to include an id,
