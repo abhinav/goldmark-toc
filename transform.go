@@ -50,6 +50,17 @@ type Transformer struct {
 	// The HTML element does not have an ID if ListID is empty.
 	ListID string
 
+	// HeadingID is the id for the Title heading rendered in the HTML.
+	//
+	// For example, if HeadingID is "toc-title",
+	// the title will be rendered as:
+	//
+	//	<h1 id="toc-title">Table of Contents</h1>
+	//
+	// If HeadingID is empty, a value will be requested
+	// from the Goldmark Parser.
+	HeadingID string
+
 	// Compact controls whether empty items should be removed
 	// from the table of contents.
 	// See the documentation for Compact for more information.
@@ -62,7 +73,7 @@ var _ parser.ASTTransformer = (*Transformer)(nil) // interface compliance
 //
 // Errors encountered while transforming are ignored. For more fine-grained
 // control, use Inspect and transform the document manually.
-func (t *Transformer) Transform(doc *ast.Document, reader text.Reader, _ parser.Context) {
+func (t *Transformer) Transform(doc *ast.Document, reader text.Reader, ctx parser.Context) {
 	toc, err := Inspect(doc, reader.Source(), MinDepth(t.MinDepth), MaxDepth(t.MaxDepth), Compact(t.Compact))
 	if err != nil {
 		// There are currently no scenarios under which Inspect
@@ -87,8 +98,15 @@ func (t *Transformer) Transform(doc *ast.Document, reader text.Reader, _ parser.
 		title = _defaultTitle
 	}
 
+	titleBytes := []byte(title)
 	heading := ast.NewHeading(1)
-	heading.AppendChild(heading, ast.NewString([]byte(title)))
+	heading.AppendChild(heading, ast.NewString(titleBytes))
+	if id := t.HeadingID; len(id) > 0 {
+		heading.SetAttributeString("id", []byte(id))
+	} else if ids := ctx.IDs(); ids != nil {
+		id := ids.Generate(titleBytes, heading.Kind())
+		heading.SetAttributeString("id", id)
+	}
 
 	doc.InsertBefore(doc, doc.FirstChild(), heading)
 }

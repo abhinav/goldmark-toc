@@ -10,7 +10,7 @@
 
     World
   want: |
-    <h1>Table of Contents</h1>
+    <h1 id="table-of-contents">Table of Contents</h1>
     <ul>
     <li>
     <a href="#hello">Hello</a></li>
@@ -28,7 +28,7 @@
 
     ### Qux
   want: |
-    <h1>Table of Contents</h1>
+    <h1 id="table-of-contents">Table of Contents</h1>
     <ul>
     <li>
     <a href="#foo">Foo</a><ul>
@@ -58,7 +58,7 @@
 
     ## Bar\-Baz
   want: |
-    <h1>Table of Contents</h1>
+    <h1 id="table-of-contents">Table of Contents</h1>
     <ul>
     <li>
     <a href="#foo-bar">Foo-Bar</a><ul>
@@ -74,7 +74,7 @@
   give: |
     # Foo\\\-Bar
   want: |
-    <h1>Table of Contents</h1>
+    <h1 id="table-of-contents">Table of Contents</h1>
     <ul>
     <li>
     <a href="#foo-bar">Foo\-Bar</a></li>
@@ -85,7 +85,7 @@
   give: |
     # **Formatted** `header`
   want: |
-    <h1>Table of Contents</h1>
+    <h1 id="table-of-contents">Table of Contents</h1>
     <ul>
     <li>
     <a href="#formatted-header">Formatted header</a></li>
@@ -99,7 +99,7 @@
 
     World
   want: |
-    <h1>Contents</h1>
+    <h1 id="contents">Contents</h1>
     <ul>
     <li>
     <a href="#hello">Hello</a></li>
@@ -118,7 +118,7 @@
 
     ### Qux
   want: |
-    <h1>Table of Contents</h1>
+    <h1 id="table-of-contents">Table of Contents</h1>
     <ul>
     <li>
     <a href="#foo">Foo</a></li>
@@ -140,7 +140,7 @@
 
     ### Qux
   want: |
-    <h1>Table of Contents</h1>
+    <h1 id="table-of-contents">Table of Contents</h1>
     <ul>
     <li>
     <ul>
@@ -165,7 +165,7 @@
 
     # World
   want: |
-    <h1>Table of Contents</h1>
+    <h1 id="table-of-contents">Table of Contents</h1>
     <ul id="my-toc">
     <li>
     <a href="#hello">Hello</a></li>
@@ -181,7 +181,7 @@
   give: |
     ### h3
   want: |
-    <h1>Table of Contents</h1>
+    <h1 id="table-of-contents">Table of Contents</h1>
     <ul>
     <li>
     <a href="#h3">h3</a></li>
@@ -194,7 +194,7 @@
     # h1
     ### h3
   want: |
-    <h1>Table of Contents</h1>
+    <h1 id="table-of-contents">Table of Contents</h1>
     <ul>
     <li>
     <a href="#h1">h1</a><ul>
@@ -205,3 +205,38 @@
     </ul>
     <h1 id="h1">h1</h1>
     <h3 id="h3">h3</h3>
+
+- desc: custom heading ID
+  headingID: toc-title
+  give: |
+    # Foo
+
+    ## Bar
+
+    # Baz
+
+    ### Qux
+  want: |
+    <h1 id="toc-title">Table of Contents</h1>
+    <ul>
+    <li>
+    <a href="#foo">Foo</a><ul>
+    <li>
+    <a href="#bar">Bar</a></li>
+    </ul>
+    </li>
+    <li>
+    <a href="#baz">Baz</a><ul>
+    <li>
+    <ul>
+    <li>
+    <a href="#qux">Qux</a></li>
+    </ul>
+    </li>
+    </ul>
+    </li>
+    </ul>
+    <h1 id="foo">Foo</h1>
+    <h2 id="bar">Bar</h2>
+    <h1 id="baz">Baz</h1>
+    <h3 id="qux">Qux</h3>

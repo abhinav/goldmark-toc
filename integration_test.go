@@ -19,11 +19,12 @@ func TestIntegration(t *testing.T) {
 	require.NoError(t, err)
 
 	var tests []struct {
-		Desc   string `yaml:"desc"`
-		Give   string `yaml:"give"`
-		Want   string `yaml:"want"`
-		Title  string `yaml:"title"`
-		ListID string `yaml:"listID"`
+		Desc      string `yaml:"desc"`
+		Give      string `yaml:"give"`
+		Want      string `yaml:"want"`
+		Title     string `yaml:"title"`
+		ListID    string `yaml:"listID"`
+		HeadingID string `yaml:"headingID"`
 
 		MinDepth int  `yaml:"minDepth"`
 		MaxDepth int  `yaml:"maxDepth"`
@@ -38,11 +39,12 @@ func TestIntegration(t *testing.T) {
 
 			md := goldmark.New(
 				goldmark.WithExtensions(&toc.Extender{
-					Title:    tt.Title,
-					MinDepth: tt.MinDepth,
-					MaxDepth: tt.MaxDepth,
-					Compact:  tt.Compact,
-					ListID:   tt.ListID,
+					Title:     tt.Title,
+					MinDepth:  tt.MinDepth,
+					MaxDepth:  tt.MaxDepth,
+					Compact:   tt.Compact,
+					ListID:    tt.ListID,
+					HeadingID: tt.HeadingID,
 				}),
 				goldmark.WithParserOptions(parser.WithAutoHeadingID()),
 			)
