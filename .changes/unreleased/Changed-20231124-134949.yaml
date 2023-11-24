@@ -1,0 +1,4 @@
+kind: Changed
+body: Table of Contents heading now automatically gets an ID if the Parser was given
+  an IDs generator.
+time: 2023-11-24T13:49:49.286533-08:00
