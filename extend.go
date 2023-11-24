@@ -51,10 +51,10 @@ type Extender struct {
 	// See the documentation for Transformer.ListID for more information.
 	ListID string
 
-	// HeadingID is the id for the Title heading rendered in the HTML.
+	// TitleID is the id for the Title heading rendered in the HTML.
 	//
-	// See the documentation for Transformer.HeadingID for more information.
-	HeadingID string
+	// See the documentation for Transformer.TitleID for more information.
+	TitleID string
 
 	// Compact controls whether empty items should be removed
 	// from the table of contents.
@@ -69,12 +69,12 @@ func (e *Extender) Extend(md goldmark.Markdown) {
 	md.Parser().AddOptions(
 		parser.WithASTTransformers(
 			util.Prioritized(&Transformer{
-				Title:     e.Title,
-				MinDepth:  e.MinDepth,
-				MaxDepth:  e.MaxDepth,
-				ListID:    e.ListID,
-				HeadingID: e.HeadingID,
-				Compact:   e.Compact,
+				Title:    e.Title,
+				MinDepth: e.MinDepth,
+				MaxDepth: e.MaxDepth,
+				ListID:   e.ListID,
+				TitleID:  e.TitleID,
+				Compact:  e.Compact,
 			}, 100),
 		),
 	)
