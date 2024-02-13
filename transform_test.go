@@ -62,6 +62,7 @@ func TestTransformer(t *testing.T) {
 	}
 }
 
+// From: https://github.com/abhinav/goldmark-toc/issues/61
 func TestTransformerWithTitleDepth(t *testing.T) {
 	t.Parallel()
 
