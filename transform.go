@@ -6,9 +6,13 @@ import (
 	"github.com/yuin/goldmark/text"
 )
 
-const _defaultTitle = "Table of Contents"
-const _defaultTitleDepth = 1
-const _defaultMaxTitleDepth = 6
+const (
+	_defaultTitle = "Table of Contents"
+
+	// Title depth is [1, 6] inclusive.
+	_defaultTitleDepth = 1
+	_maxTitleDepth     = 6
+)
 
 // Transformer is a Goldmark AST transformer adds a TOC to the top of a
 // Markdown document.
@@ -108,13 +112,8 @@ func (t *Transformer) Transform(doc *ast.Document, reader text.Reader, ctx parse
 	if titleDepth < 1 {
 		titleDepth = _defaultTitleDepth
 	}
-
-	// Defaults to max title depth of 6
-	// if given TitleDepth > 6. Could also
-	// make sense to default to
-	// _defaultTitleDepth instead.
-	if titleDepth > _defaultMaxTitleDepth {
-		titleDepth = _defaultMaxTitleDepth
+	if titleDepth > _maxTitleDepth {
+		titleDepth = _maxTitleDepth
 	}
 
 	titleBytes := []byte(title)
