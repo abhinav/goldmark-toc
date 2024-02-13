@@ -1,6 +1,7 @@
 package toc
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 
@@ -74,65 +75,40 @@ func TestTransformerWithTitleDepth(t *testing.T) {
 		"## Now",
 	}, "\n") + "\n")
 
-	tests := []struct {
-		desc           string
-		giveTitleDepth int
-		wantTitleDepth int
-	}{
+	type testCase struct {
+		desc      string
+		giveDepth int
+		wantDepth int
+	}
+
+	tests := []testCase{
 		{
-			desc:           "default title depth",
-			wantTitleDepth: _defaultTitleDepth,
+			desc:      "default",
+			wantDepth: _defaultTitleDepth,
 		},
 		{
-			desc:           "title depth 0",
-			giveTitleDepth: 0,
-			wantTitleDepth: 1,
+			desc:      "< 1",
+			giveDepth: -1,
+			wantDepth: 1,
 		},
 		{
-			desc:           "title depth 1",
-			giveTitleDepth: 1,
-			wantTitleDepth: 1,
+			desc:      "> 6",
+			giveDepth: 7,
+			wantDepth: 6,
 		},
 		{
-			desc:           "title depth 2",
-			giveTitleDepth: 2,
-			wantTitleDepth: 2,
+			desc:      "absurd",
+			giveDepth: 130931,
+			wantDepth: 6,
 		},
-		{
-			desc:           "title depth 3",
-			giveTitleDepth: 3,
-			wantTitleDepth: 3,
-		},
-		{
-			desc:           "title depth 4",
-			giveTitleDepth: 4,
-			wantTitleDepth: 4,
-		},
-		{
-			desc:           "title depth 5",
-			giveTitleDepth: 5,
-			wantTitleDepth: 5,
-		},
-		{
-			desc:           "title depth 6",
-			giveTitleDepth: 6,
-			wantTitleDepth: 6,
-		},
-		{
-			desc:           "title depth 7",
-			giveTitleDepth: 7,
-			wantTitleDepth: 6,
-		},
-		{
-			desc:           "title depth 255",
-			giveTitleDepth: 255,
-			wantTitleDepth: 6,
-		},
-		{
-			desc:           "title depth -1",
-			giveTitleDepth: -1,
-			wantTitleDepth: 1,
-		},
+	}
+
+	for i := _defaultTitleDepth; i <= _maxTitleDepth; i++ {
+		tests = append(tests, testCase{
+			desc:      fmt.Sprintf("valid/%d", i),
+			giveDepth: i,
+			wantDepth: i,
+		})
 	}
 
 	for _, tt := range tests {
@@ -146,7 +122,7 @@ func TestTransformerWithTitleDepth(t *testing.T) {
 				parser.WithAutoHeadingID(),
 				parser.WithASTTransformers(
 					util.Prioritized(&Transformer{
-						TitleDepth: tt.giveTitleDepth,
+						TitleDepth: tt.giveDepth,
 					}, 100),
 				),
 			).Parse(text.NewReader(src))
@@ -155,7 +131,7 @@ func TestTransformerWithTitleDepth(t *testing.T) {
 			heading, ok := doc.FirstChild().(*ast.Heading)
 
 			require.True(t, ok, "first child must be a heading, got %T", doc.FirstChild())
-			assert.Equal(t, tt.wantTitleDepth, heading.Level, "level mismatch")
+			assert.Equal(t, tt.wantDepth, heading.Level, "level mismatch")
 		})
 	}
 }
