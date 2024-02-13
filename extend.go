@@ -32,6 +32,10 @@ type Extender struct {
 	// Defaults to "Table of Contents" if unspecified.
 	Title string
 
+	// TitleDepth is the heading depth for the Title.
+	// Defaults to 1 (<h1>) if unspecified.
+	TitleDepth int
+
 	// MinDepth is the minimum depth of the table of contents.
 	// Headings with a level lower than the specified depth will be ignored.
 	// See the documentation for MinDepth for more information.
@@ -69,12 +73,13 @@ func (e *Extender) Extend(md goldmark.Markdown) {
 	md.Parser().AddOptions(
 		parser.WithASTTransformers(
 			util.Prioritized(&Transformer{
-				Title:    e.Title,
-				MinDepth: e.MinDepth,
-				MaxDepth: e.MaxDepth,
-				ListID:   e.ListID,
-				TitleID:  e.TitleID,
-				Compact:  e.Compact,
+				Title:      e.Title,
+				TitleDepth: e.TitleDepth,
+				MinDepth:   e.MinDepth,
+				MaxDepth:   e.MaxDepth,
+				ListID:     e.ListID,
+				TitleID:    e.TitleID,
+				Compact:    e.Compact,
 			}, 100),
 		),
 	)
