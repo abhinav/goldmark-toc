@@ -128,6 +128,11 @@ func TestTransformerWithTitleDepth(t *testing.T) {
 			giveTitleDepth: 255,
 			wantTitleDepth: 6,
 		},
+		{
+			desc:           "title depth -1",
+			giveTitleDepth: -1,
+			wantTitleDepth: 1,
+		},
 	}
 
 	for _, tt := range tests {
