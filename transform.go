@@ -105,7 +105,7 @@ func (t *Transformer) Transform(doc *ast.Document, reader text.Reader, ctx parse
 	}
 
 	titleDepth := t.TitleDepth
-	if titleDepth == 0 {
+	if titleDepth < 1 {
 		titleDepth = _defaultTitleDepth
 	}
 
