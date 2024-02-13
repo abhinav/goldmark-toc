@@ -240,3 +240,74 @@
     <h2 id="bar">Bar</h2>
     <h1 id="baz">Baz</h1>
     <h3 id="qux">Qux</h3>
+
+# From: https://github.com/abhinav/goldmark-toc/issues/61
+- desc: custom title depth of 2
+  titleDepth: 2
+  give: |
+    # Foo
+
+    ## Bar
+
+    # Baz
+
+    ### Qux
+  want: |
+    <h2 id="table-of-contents">Table of Contents</h2>
+    <ul>
+    <li>
+    <a href="#foo">Foo</a><ul>
+    <li>
+    <a href="#bar">Bar</a></li>
+    </ul>
+    </li>
+    <li>
+    <a href="#baz">Baz</a><ul>
+    <li>
+    <ul>
+    <li>
+    <a href="#qux">Qux</a></li>
+    </ul>
+    </li>
+    </ul>
+    </li>
+    </ul>
+    <h1 id="foo">Foo</h1>
+    <h2 id="bar">Bar</h2>
+    <h1 id="baz">Baz</h1>
+    <h3 id="qux">Qux</h3>
+
+- desc: title depth > 6
+  titleDepth: 7
+  give: |
+    # Foo
+
+    ## Bar
+
+    # Baz
+
+    ### Qux
+  want: |
+    <h6 id="table-of-contents">Table of Contents</h6>
+    <ul>
+    <li>
+    <a href="#foo">Foo</a><ul>
+    <li>
+    <a href="#bar">Bar</a></li>
+    </ul>
+    </li>
+    <li>
+    <a href="#baz">Baz</a><ul>
+    <li>
+    <ul>
+    <li>
+    <a href="#qux">Qux</a></li>
+    </ul>
+    </li>
+    </ul>
+    </li>
+    </ul>
+    <h1 id="foo">Foo</h1>
+    <h2 id="bar">Bar</h2>
+    <h1 id="baz">Baz</h1>
+    <h3 id="qux">Qux</h3>

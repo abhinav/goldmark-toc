@@ -1,0 +1,4 @@
+kind: Added
+body: >-
+  {Extender, Transformer}: Add TitleDepth field to change the level of the Table of Contents heading.
+time: 2024-02-12T21:08:04.915706-08:00

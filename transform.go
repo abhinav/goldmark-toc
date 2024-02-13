@@ -6,7 +6,13 @@ import (
 	"github.com/yuin/goldmark/text"
 )
 
-const _defaultTitle = "Table of Contents"
+const (
+	_defaultTitle = "Table of Contents"
+
+	// Title depth is [1, 6] inclusive.
+	_defaultTitleDepth = 1
+	_maxTitleDepth     = 6
+)
 
 // Transformer is a Goldmark AST transformer adds a TOC to the top of a
 // Markdown document.
@@ -29,6 +35,10 @@ type Transformer struct {
 	// Title is the title of the table of contents section.
 	// Defaults to "Table of Contents" if unspecified.
 	Title string
+
+	// TitleDepth is the heading depth for the Title.
+	// Defaults to 1 (<h1>) if unspecified.
+	TitleDepth int
 
 	// MinDepth is the minimum depth of the table of contents.
 	// See the documentation for MinDepth for more information.
@@ -98,8 +108,16 @@ func (t *Transformer) Transform(doc *ast.Document, reader text.Reader, ctx parse
 		title = _defaultTitle
 	}
 
+	titleDepth := t.TitleDepth
+	if titleDepth < 1 {
+		titleDepth = _defaultTitleDepth
+	}
+	if titleDepth > _maxTitleDepth {
+		titleDepth = _maxTitleDepth
+	}
+
 	titleBytes := []byte(title)
-	heading := ast.NewHeading(1)
+	heading := ast.NewHeading(titleDepth)
 	heading.AppendChild(heading, ast.NewString(titleBytes))
 	if id := t.TitleID; len(id) > 0 {
 		heading.SetAttributeString("id", []byte(id))
