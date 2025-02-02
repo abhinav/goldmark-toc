@@ -58,7 +58,8 @@ func TestTransformer(t *testing.T) {
 
 			heading, ok := doc.FirstChild().(*ast.Heading)
 			require.True(t, ok, "first child must be a heading, got %T", doc.FirstChild())
-			assert.Equal(t, tt.wantTitle, string(heading.Text(src)), "title mismatch")
+			gotTitle := nodeText(src, heading)
+			assert.Equal(t, tt.wantTitle, string(gotTitle), "title mismatch")
 		})
 	}
 }
