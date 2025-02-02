@@ -1,7 +1,9 @@
 package toc
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/util"
@@ -265,7 +267,7 @@ func Inspect(n ast.Node, src []byte, options ...InspectOption) (*TOC, error) {
 			target = appendChild(parent)
 		}
 
-		target.Title = util.UnescapePunctuations(heading.Text(src))
+		target.Title = util.UnescapePunctuations(nodeText(src, heading))
 		if id, ok := n.AttributeString("id"); ok {
 			target.ID, _ = id.([]byte)
 		}
@@ -299,5 +301,24 @@ func compactItems(items *Items) {
 		newItems = append(newItems, (*items)[i+1:]...)
 		*items = newItems
 		i-- // start with first child
+	}
+}
+
+func nodeText(src []byte, n ast.Node) []byte {
+	var buf bytes.Buffer
+	writeNodeText(src, &buf, n)
+	return buf.Bytes()
+}
+
+func writeNodeText(src []byte, dst io.Writer, n ast.Node) {
+	switch n := n.(type) {
+	case *ast.Text:
+		_, _ = dst.Write(n.Segment.Value(src))
+	case *ast.String:
+		_, _ = dst.Write(n.Value)
+	default:
+		for c := n.FirstChild(); c != nil; c = c.NextSibling() {
+			writeNodeText(src, dst, c)
+		}
 	}
 }

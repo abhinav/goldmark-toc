@@ -63,7 +63,7 @@ func (tt *listItem) Match(t *testing.T, got *ast.ListItem) {
 			}
 		}
 
-		assert.Equal(t, want, string(child.Text(nil /* src */)))
+		assert.Equal(t, want, string(nodeText(nil /* src */, child)))
 		child = child.NextSibling()
 	}
 
