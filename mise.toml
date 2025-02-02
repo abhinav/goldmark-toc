@@ -36,3 +36,11 @@ run = "go mod tidy -diff"
 [tasks."lint:golangci"]
 description = "Run golangci-lint"
 run = "golangci-lint run"
+
+[tasks."release:prepare"]
+description = "Prepare a release"
+run = [
+  "changie batch {{arg(name='version')}}",
+  "changie merge",
+]
+
