@@ -270,9 +270,7 @@ func TestRenderList_nil(t *testing.T) {
 func TestOrderedList(t *testing.T) {
 	t.Parallel()
 
-	renderer := &ListRenderer{Marker: '.'}
-
-	node := renderer.Render(&TOC{
+	node := RenderOrderedList(&TOC{
 		Items: Items{
 			item("Foo", "foo",
 				item("Bar", "bar"),

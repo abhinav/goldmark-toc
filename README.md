@@ -229,10 +229,11 @@ tree, err := toc.Inspect(doc, src, toc.MinDepth(2), toc.MaxDepth(3))
 #### Generate a Markdown list
 
 You can render the table of contents into a Markdown list with
-`toc.RenderList`.
+`toc.RenderList` or `toc.RenderOrderedList`.
 
 ```go
-list := toc.RenderList(tree)
+list := toc.RenderList(tree)         // will produce <ul>
+list := toc.RenderOrderedList(tree)  // will produce <ol>
 ```
 
 This builds a list representation of the table of contents to be rendered as
