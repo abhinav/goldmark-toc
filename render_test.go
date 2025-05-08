@@ -266,3 +266,24 @@ func TestRenderList_nil(t *testing.T) {
 
 	assert.Nil(t, RenderList(nil))
 }
+
+func TestOrderedList(t *testing.T) {
+	t.Parallel()
+
+	renderer := &ListRenderer{Marker: '.'}
+
+	node := renderer.Render(&TOC{
+		Items: Items{
+			item("Foo", "foo",
+				item("Bar", "bar"),
+				item("Baz", "baz"),
+			),
+		},
+	})
+
+	var buf bytes.Buffer
+	err := goldmark.DefaultRenderer().Render(&buf, nil, node)
+	require.NoError(t, err)
+
+	assert.Contains(t, buf.String(), `<ol>`)
+}

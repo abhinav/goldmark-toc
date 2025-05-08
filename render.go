@@ -57,6 +57,9 @@ func (r *ListRenderer) renderItems(items Items) ast.Node {
 	}
 
 	list := ast.NewList(mkr)
+	if list.IsOrdered() {
+		list.Start = 1
+	}
 	for _, item := range items {
 		list.AppendChild(list, r.renderItem(item))
 	}
