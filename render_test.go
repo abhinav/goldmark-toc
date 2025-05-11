@@ -284,4 +284,5 @@ func TestOrderedList(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Contains(t, buf.String(), `<ol>`)
+	assert.NotContains(t, buf.String(), "start=")
 }
