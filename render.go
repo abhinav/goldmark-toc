@@ -13,6 +13,16 @@ func RenderList(toc *TOC) ast.Node {
 	return new(ListRenderer).Render(toc)
 }
 
+// RenderOrderedList renders a table of contents as a nested, ordered
+// list with a sane, default configuration for the ListRenderer.
+//
+// If the TOC is nil or empty, nil is returned.
+// Do not call Goldmark's renderer if the returned node is nil.
+func RenderOrderedList(toc *TOC) ast.Node {
+	renderer := ListRenderer{Marker: '.'}
+	return renderer.Render(toc)
+}
+
 // ListRenderer builds a nested list from a table of contents.
 //
 // For example,
@@ -57,6 +67,9 @@ func (r *ListRenderer) renderItems(items Items) ast.Node {
 	}
 
 	list := ast.NewList(mkr)
+	if list.IsOrdered() {
+		list.Start = 1
+	}
 	for _, item := range items {
 		list.AppendChild(list, r.renderItem(item))
 	}
