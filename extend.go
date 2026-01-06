@@ -33,11 +33,8 @@ import (
 type Extender struct {
 	// Title is the title of the table of contents section.
 	// Defaults to "Table of Contents" if unspecified.
+	// The title is rendered as a <p> element.
 	Title string
-
-	// TitleDepth is the heading depth for the Title.
-	// Defaults to 1 (<h1>) if unspecified.
-	TitleDepth int
 
 	// MinDepth is the minimum depth of the table of contents.
 	// Headings with a level lower than the specified depth will be ignored.
@@ -58,7 +55,7 @@ type Extender struct {
 	// See the documentation for Transformer.ListID for more information.
 	ListID string
 
-	// TitleID is the id for the Title heading rendered in the HTML.
+	// TitleID is the id for the Title element rendered in the HTML.
 	//
 	// See the documentation for Transformer.TitleID for more information.
 	TitleID string
@@ -69,12 +66,13 @@ type Extender struct {
 	// See the documentation for Compact for more information.
 	Compact bool
 
-	// HideTitle controls whether the title heading is rendered.
-	// When set to true, the title (e.g., <h1>Table of Contents</h1>) is not rendered,
+	// HideTitle controls whether the title is rendered.
+	// When set to true, the title (e.g., <p>Table of Contents</p>) is not rendered,
 	// and only the TOC list is output.
 	//
-	// This is useful when you want to reserve <h1> for the main page title
-	// or when you want to style the TOC differently.
+	// When HideTitle is true and ContainerElement is set,
+	// an aria-label attribute with the title text is added to the container
+	// for accessibility.
 	//
 	// Defaults to false (title is shown).
 	HideTitle bool
@@ -86,7 +84,7 @@ type Extender struct {
 	// will be rendered as:
 	//
 	//	<nav>
-	//	  <h1>Table of Contents</h1>
+	//	  <p>Table of Contents</p>
 	//	  <ul>...</ul>
 	//	</nav>
 	//
@@ -125,7 +123,6 @@ func (e *Extender) Extend(md goldmark.Markdown) {
 		parser.WithASTTransformers(
 			util.Prioritized(&Transformer{
 				Title:            e.Title,
-				TitleDepth:       e.TitleDepth,
 				TitleID:          e.TitleID,
 				ListID:           e.ListID,
 				MinDepth:         e.MinDepth,
@@ -183,6 +180,11 @@ func (r *containerNodeRenderer) renderContainer(w util.BufWriter, source []byte,
 		if n.class != "" {
 			_, _ = w.WriteString(` class="`)
 			_, _ = w.WriteString(n.class)
+			_, _ = w.WriteString(`"`)
+		}
+		if n.ariaLabel != "" {
+			_, _ = w.WriteString(` aria-label="`)
+			_, _ = w.WriteString(n.ariaLabel)
 			_, _ = w.WriteString(`"`)
 		}
 		_, _ = w.WriteString(">\n")

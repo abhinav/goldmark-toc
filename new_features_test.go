@@ -182,14 +182,14 @@ func TestHideTitleWithContainer(t *testing.T) {
 
 	output := buf.String()
 
-	// Should have nav container
-	if !strings.Contains(output, `<nav class="toc">`) {
-		t.Errorf("Output should contain nav container.\nOutput:\n%s", output)
+	// Should have nav container with aria-label (since HideTitle is true)
+	if !strings.Contains(output, `<nav class="toc" aria-label="Table of Contents">`) {
+		t.Errorf("Output should contain nav container with aria-label.\nOutput:\n%s", output)
 	}
 
-	// Should NOT have "Table of Contents" title
-	if strings.Contains(output, "Table of Contents") {
-		t.Errorf("Output should not contain title when HideTitle=true.\nOutput:\n%s", output)
+	// Should NOT have visible title element (no <p>Table of Contents</p>)
+	if strings.Contains(output, ">Table of Contents<") {
+		t.Errorf("Output should not contain visible title when HideTitle=true.\nOutput:\n%s", output)
 	}
 
 	// Should still have the TOC list
@@ -210,7 +210,6 @@ func TestContainerWithCustomTitle(t *testing.T) {
 		goldmark.WithParserOptions(parser.WithAutoHeadingID()),
 		goldmark.WithExtensions(&toc.Extender{
 			Title:            "Contents",
-			TitleDepth:       2,
 			ContainerElement: "nav",
 			ContainerID:      "toc",
 		}),
@@ -228,13 +227,78 @@ func TestContainerWithCustomTitle(t *testing.T) {
 		t.Errorf("Output should contain nav container with id.\nOutput:\n%s", output)
 	}
 
-	// Should have h2 title (TitleDepth=2)
-	if !strings.Contains(output, "<h2") {
-		t.Errorf("Output should contain h2 heading for title.\nOutput:\n%s", output)
+	// Should have <p> title element (not a heading)
+	if !strings.Contains(output, "<p") {
+		t.Errorf("Output should contain <p> element for title.\nOutput:\n%s", output)
 	}
 
 	// Should have custom title text
 	if !strings.Contains(output, "Contents") {
 		t.Errorf("Output should contain custom title 'Contents'.\nOutput:\n%s", output)
+	}
+}
+
+func TestHideTitleWithContainerAriaLabel(t *testing.T) {
+	t.Parallel()
+
+	src := []byte(`
+# Section 1
+## Subsection 1.1
+`)
+
+	md := goldmark.New(
+		goldmark.WithParserOptions(parser.WithAutoHeadingID()),
+		goldmark.WithExtensions(&toc.Extender{
+			Title:            "Navigation",
+			HideTitle:        true,
+			ContainerElement: "nav",
+			ContainerClass:   "toc",
+		}),
+	)
+
+	var buf bytes.Buffer
+	if err := md.Convert(src, &buf); err != nil {
+		t.Fatalf("Convert failed: %v", err)
+	}
+
+	output := buf.String()
+
+	// Should have nav container with aria-label
+	if !strings.Contains(output, `aria-label="Navigation"`) {
+		t.Errorf("Output should contain aria-label when HideTitle=true.\nOutput:\n%s", output)
+	}
+
+	// Should NOT have visible title text
+	if strings.Contains(output, ">Navigation<") {
+		t.Errorf("Output should not contain visible title when HideTitle=true.\nOutput:\n%s", output)
+	}
+}
+
+func TestHideTitleWithContainerDefaultAriaLabel(t *testing.T) {
+	t.Parallel()
+
+	src := []byte(`
+# Section 1
+## Subsection 1.1
+`)
+
+	md := goldmark.New(
+		goldmark.WithParserOptions(parser.WithAutoHeadingID()),
+		goldmark.WithExtensions(&toc.Extender{
+			HideTitle:        true,
+			ContainerElement: "nav",
+		}),
+	)
+
+	var buf bytes.Buffer
+	if err := md.Convert(src, &buf); err != nil {
+		t.Fatalf("Convert failed: %v", err)
+	}
+
+	output := buf.String()
+
+	// Should have aria-label with default title
+	if !strings.Contains(output, `aria-label="Table of Contents"`) {
+		t.Errorf("Output should contain default aria-label when HideTitle=true.\nOutput:\n%s", output)
 	}
 }

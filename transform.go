@@ -8,10 +8,6 @@ import (
 
 const (
 	_defaultTitle = "Table of Contents"
-
-	// Title depth is [1, 6] inclusive.
-	_defaultTitleDepth = 1
-	_maxTitleDepth     = 6
 )
 
 // Transformer is a Goldmark AST transformer adds a TOC to the top of a
@@ -34,11 +30,8 @@ const (
 type Transformer struct {
 	// Title is the title of the table of contents section.
 	// Defaults to "Table of Contents" if unspecified.
+	// The title is rendered as a <p> element.
 	Title string
-
-	// TitleDepth is the heading depth for the Title.
-	// Defaults to 1 (<h1>) if unspecified.
-	TitleDepth int
 
 	// MinDepth is the minimum depth of the table of contents.
 	// See the documentation for MinDepth for more information.
@@ -60,12 +53,12 @@ type Transformer struct {
 	// The HTML element does not have an ID if ListID is empty.
 	ListID string
 
-	// TitleID is the id for the Title heading rendered in the HTML.
+	// TitleID is the id for the Title element rendered in the HTML.
 	//
 	// For example, if TitleID is "toc-title",
 	// the title will be rendered as:
 	//
-	//	<h1 id="toc-title">Table of Contents</h1>
+	//	<p id="toc-title">Table of Contents</p>
 	//
 	// If TitleID is empty, a value will be requested
 	// from the Goldmark Parser.
@@ -76,12 +69,13 @@ type Transformer struct {
 	// See the documentation for Compact for more information.
 	Compact bool
 
-	// HideTitle controls whether the title heading is rendered.
-	// When set to true, the title (e.g., <h1>Table of Contents</h1>) is not rendered,
+	// HideTitle controls whether the title is rendered.
+	// When set to true, the title (e.g., <p>Table of Contents</p>) is not rendered,
 	// and only the TOC list is output.
 	//
-	// This is useful when you want to reserve <h1> for the main page title
-	// or when you want to style the TOC differently.
+	// When HideTitle is true and ContainerElement is set,
+	// an aria-label attribute with the title text is added to the container
+	// for accessibility.
 	//
 	// Defaults to false (title is shown).
 	HideTitle bool
@@ -93,7 +87,7 @@ type Transformer struct {
 	// will be rendered as:
 	//
 	//	<nav>
-	//	  <h1>Table of Contents</h1>
+	//	  <p>Table of Contents</p>
 	//	  <ul>...</ul>
 	//	</nav>
 	//
@@ -149,30 +143,23 @@ func (t *Transformer) Transform(doc *ast.Document, reader text.Reader, ctx parse
 		listNode.SetAttributeString("id", []byte(id))
 	}
 
-	// Build the title heading if not hidden
-	var headingNode *ast.Heading
+	// Determine the title text
+	title := t.Title
+	if len(title) == 0 {
+		title = _defaultTitle
+	}
+
+	// Build the title paragraph if not hidden
+	var titleNode *ast.Paragraph
 	if !t.HideTitle {
-		title := t.Title
-		if len(title) == 0 {
-			title = _defaultTitle
-		}
-
-		titleDepth := t.TitleDepth
-		if titleDepth < 1 {
-			titleDepth = _defaultTitleDepth
-		}
-		if titleDepth > _maxTitleDepth {
-			titleDepth = _maxTitleDepth
-		}
-
 		titleBytes := []byte(title)
-		headingNode = ast.NewHeading(titleDepth)
-		headingNode.AppendChild(headingNode, ast.NewString(titleBytes))
+		titleNode = ast.NewParagraph()
+		titleNode.AppendChild(titleNode, ast.NewString(titleBytes))
 		if id := t.TitleID; len(id) > 0 {
-			headingNode.SetAttributeString("id", []byte(id))
+			titleNode.SetAttributeString("id", []byte(id))
 		} else if ids := ctx.IDs(); ids != nil {
-			id := ids.Generate(titleBytes, headingNode.Kind())
-			headingNode.SetAttributeString("id", id)
+			id := ids.Generate(titleBytes, titleNode.Kind())
+			titleNode.SetAttributeString("id", id)
 		}
 	}
 
@@ -183,16 +170,20 @@ func (t *Transformer) Transform(doc *ast.Document, reader text.Reader, ctx parse
 			class:   t.ContainerClass,
 			id:      t.ContainerID,
 		}
-		if headingNode != nil {
-			container.AppendChild(container, headingNode)
+		// Add aria-label when title is hidden for accessibility
+		if t.HideTitle {
+			container.ariaLabel = title
+		}
+		if titleNode != nil {
+			container.AppendChild(container, titleNode)
 		}
 		container.AppendChild(container, listNode)
 		doc.InsertBefore(doc, doc.FirstChild(), container)
 	} else {
 		// Insert without container (original behavior)
 		doc.InsertBefore(doc, doc.FirstChild(), listNode)
-		if headingNode != nil {
-			doc.InsertBefore(doc, doc.FirstChild(), headingNode)
+		if titleNode != nil {
+			doc.InsertBefore(doc, doc.FirstChild(), titleNode)
 		}
 	}
 }
@@ -200,9 +191,10 @@ func (t *Transformer) Transform(doc *ast.Document, reader text.Reader, ctx parse
 // containerNode is a custom AST node that renders as a specified HTML element.
 type containerNode struct {
 	ast.BaseBlock
-	element string
-	class   string
-	id      string
+	element   string
+	class     string
+	id        string
+	ariaLabel string
 }
 
 // KindContainerNode is the kind of the container node.
