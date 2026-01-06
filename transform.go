@@ -75,6 +75,54 @@ type Transformer struct {
 	// from the table of contents.
 	// See the documentation for Compact for more information.
 	Compact bool
+
+	// HideTitle controls whether the title heading is rendered.
+	// When set to true, the title (e.g., <h1>Table of Contents</h1>) is not rendered,
+	// and only the TOC list is output.
+	//
+	// This is useful when you want to reserve <h1> for the main page title
+	// or when you want to style the TOC differently.
+	//
+	// Defaults to false (title is shown).
+	HideTitle bool
+
+	// ContainerElement specifies the HTML element to wrap the TOC in.
+	// Common values are "nav", "div", "aside", etc.
+	//
+	// For example, if ContainerElement is "nav", the table of contents
+	// will be rendered as:
+	//
+	//	<nav>
+	//	  <h1>Table of Contents</h1>
+	//	  <ul>...</ul>
+	//	</nav>
+	//
+	// If ContainerElement is empty, no wrapper element is added.
+	ContainerElement string
+
+	// ContainerClass specifies the CSS class(es) for the container element.
+	// This is only used when ContainerElement is set.
+	//
+	// For example, if ContainerElement is "nav" and ContainerClass is "toc-nav",
+	// the table of contents will be rendered as:
+	//
+	//	<nav class="toc-nav">
+	//	  ...
+	//	</nav>
+	//
+	// Multiple classes can be specified separated by spaces.
+	ContainerClass string
+
+	// ContainerID specifies the ID for the container element.
+	// This is only used when ContainerElement is set.
+	//
+	// For example, if ContainerElement is "nav" and ContainerID is "table-of-contents",
+	// the table of contents will be rendered as:
+	//
+	//	<nav id="table-of-contents">
+	//	  ...
+	//	</nav>
+	ContainerID string
 }
 
 var _ parser.ASTTransformer = (*Transformer)(nil) // interface compliance
@@ -101,30 +149,71 @@ func (t *Transformer) Transform(doc *ast.Document, reader text.Reader, ctx parse
 		listNode.SetAttributeString("id", []byte(id))
 	}
 
-	doc.InsertBefore(doc, doc.FirstChild(), listNode)
+	// Build the title heading if not hidden
+	var headingNode *ast.Heading
+	if !t.HideTitle {
+		title := t.Title
+		if len(title) == 0 {
+			title = _defaultTitle
+		}
 
-	title := t.Title
-	if len(title) == 0 {
-		title = _defaultTitle
+		titleDepth := t.TitleDepth
+		if titleDepth < 1 {
+			titleDepth = _defaultTitleDepth
+		}
+		if titleDepth > _maxTitleDepth {
+			titleDepth = _maxTitleDepth
+		}
+
+		titleBytes := []byte(title)
+		headingNode = ast.NewHeading(titleDepth)
+		headingNode.AppendChild(headingNode, ast.NewString(titleBytes))
+		if id := t.TitleID; len(id) > 0 {
+			headingNode.SetAttributeString("id", []byte(id))
+		} else if ids := ctx.IDs(); ids != nil {
+			id := ids.Generate(titleBytes, headingNode.Kind())
+			headingNode.SetAttributeString("id", id)
+		}
 	}
 
-	titleDepth := t.TitleDepth
-	if titleDepth < 1 {
-		titleDepth = _defaultTitleDepth
+	// If container element is specified, wrap everything in it
+	if t.ContainerElement != "" {
+		container := &containerNode{
+			element: t.ContainerElement,
+			class:   t.ContainerClass,
+			id:      t.ContainerID,
+		}
+		if headingNode != nil {
+			container.AppendChild(container, headingNode)
+		}
+		container.AppendChild(container, listNode)
+		doc.InsertBefore(doc, doc.FirstChild(), container)
+	} else {
+		// Insert without container (original behavior)
+		doc.InsertBefore(doc, doc.FirstChild(), listNode)
+		if headingNode != nil {
+			doc.InsertBefore(doc, doc.FirstChild(), headingNode)
+		}
 	}
-	if titleDepth > _maxTitleDepth {
-		titleDepth = _maxTitleDepth
-	}
+}
 
-	titleBytes := []byte(title)
-	heading := ast.NewHeading(titleDepth)
-	heading.AppendChild(heading, ast.NewString(titleBytes))
-	if id := t.TitleID; len(id) > 0 {
-		heading.SetAttributeString("id", []byte(id))
-	} else if ids := ctx.IDs(); ids != nil {
-		id := ids.Generate(titleBytes, heading.Kind())
-		heading.SetAttributeString("id", id)
-	}
+// containerNode is a custom AST node that renders as a specified HTML element.
+type containerNode struct {
+	ast.BaseBlock
+	element string
+	class   string
+	id      string
+}
 
-	doc.InsertBefore(doc, doc.FirstChild(), heading)
+// KindContainerNode is the kind of the container node.
+var KindContainerNode = ast.NewNodeKind("TOCContainer")
+
+// Kind returns the kind of the container node.
+func (n *containerNode) Kind() ast.NodeKind {
+	return KindContainerNode
+}
+
+// Dump dumps the container node to the given writer.
+func (n *containerNode) Dump(source []byte, level int) {
+	ast.DumpHelper(n, source, level, nil, nil)
 }

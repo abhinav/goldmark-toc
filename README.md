@@ -83,6 +83,27 @@ You can specify an ID for the title heading with the `TitleID` option.
 }
 ```
 
+#### Hiding the title
+
+If you don't want a title heading rendered at all
+(e.g., to reserve `<h1>` for the main page title),
+set the `HideTitle` field to `true`.
+
+```go
+&toc.Extender{
+  HideTitle: true,
+}
+```
+
+This will render only the TOC list without a heading:
+
+```html
+<ul>
+  <li><a href="#section-1">Section 1</a></li>
+  <!-- ... -->
+</ul>
+```
+
 #### Adding an ID
 
 If you want the rendered HTML list to include an id,
@@ -100,6 +121,71 @@ This will render:
 <ul id="toc">
   <!-- ... -->
 </ul>
+```
+
+#### Wrapping in a container element
+
+If you want to wrap the TOC in a container element for easier styling
+or semantic HTML, use the `ContainerElement` field.
+Common values are `"nav"`, `"div"`, or `"aside"`.
+
+```go
+&toc.Extender{
+  ContainerElement: "nav",
+}
+```
+
+This will render:
+
+```html
+<nav>
+<h1>Table of Contents</h1>
+<ul>
+  <!-- ... -->
+</ul>
+</nav>
+```
+
+You can add a CSS class and/or ID to the container with
+`ContainerClass` and `ContainerID`:
+
+```go
+&toc.Extender{
+  ContainerElement: "nav",
+  ContainerClass:   "toc-nav",
+  ContainerID:      "table-of-contents",
+}
+```
+
+This will render:
+
+```html
+<nav id="table-of-contents" class="toc-nav">
+<h1>Table of Contents</h1>
+<ul>
+  <!-- ... -->
+</ul>
+</nav>
+```
+
+You can combine `HideTitle` with container options:
+
+```go
+&toc.Extender{
+  HideTitle:        true,
+  ContainerElement: "nav",
+  ContainerClass:   "toc",
+}
+```
+
+This will render:
+
+```html
+<nav class="toc">
+<ul>
+  <!-- ... -->
+</ul>
+</nav>
 ```
 
 #### Limiting the Table of Contents
@@ -178,6 +264,10 @@ parsed by this parser.
 
 As with the previous example, this enables `parser.WithAutoHeadingID` to get
 auto-generated heading IDs.
+
+The `Transformer` supports the same options as `Extender`:
+`Title`, `TitleDepth`, `TitleID`, `ListID`, `MinDepth`, `MaxDepth`, `Compact`,
+`HideTitle`, `ContainerElement`, `ContainerClass`, and `ContainerID`.
 
 ### Manual
 
