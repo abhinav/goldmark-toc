@@ -85,8 +85,7 @@ You can specify an ID for the title heading with the `TitleID` option.
 
 #### Hiding the title
 
-If you don't want a title heading rendered at all
-(e.g., to reserve `<h1>` for the main page title),
+If you don't want a title rendered at all,
 set the `HideTitle` field to `true`.
 
 ```go
@@ -95,13 +94,36 @@ set the `HideTitle` field to `true`.
 }
 ```
 
-This will render only the TOC list without a heading:
+This will render only the TOC list without a title:
 
 ```html
 <ul>
   <li><a href="#section-1">Section 1</a></li>
   <!-- ... -->
 </ul>
+```
+
+When `HideTitle` is combined with `ContainerElement`,
+an `aria-label` attribute is automatically added to the container
+for accessibility. The `aria-label` uses the `Title` value
+(or the default "Table of Contents"):
+
+```go
+&toc.Extender{
+  Title:            "Navigation",
+  HideTitle:        true,
+  ContainerElement: "nav",
+}
+```
+
+This will render:
+
+```html
+<nav aria-label="Navigation">
+<ul>
+  <!-- ... -->
+</ul>
+</nav>
 ```
 
 #### Adding an ID
@@ -139,7 +161,7 @@ This will render:
 
 ```html
 <nav>
-<h1>Table of Contents</h1>
+<p>Table of Contents</p>
 <ul>
   <!-- ... -->
 </ul>
@@ -161,7 +183,7 @@ This will render:
 
 ```html
 <nav id="table-of-contents" class="toc-nav">
-<h1>Table of Contents</h1>
+<p>Table of Contents</p>
 <ul>
   <!-- ... -->
 </ul>
@@ -178,10 +200,10 @@ You can combine `HideTitle` with container options:
 }
 ```
 
-This will render:
+This will render (with `aria-label` for accessibility):
 
 ```html
-<nav class="toc">
+<nav class="toc" aria-label="Table of Contents">
 <ul>
   <!-- ... -->
 </ul>
@@ -266,7 +288,7 @@ As with the previous example, this enables `parser.WithAutoHeadingID` to get
 auto-generated heading IDs.
 
 The `Transformer` supports the same options as `Extender`:
-`Title`, `TitleDepth`, `TitleID`, `ListID`, `MinDepth`, `MaxDepth`, `Compact`,
+`Title`, `TitleID`, `ListID`, `MinDepth`, `MaxDepth`, `Compact`,
 `HideTitle`, `ContainerElement`, `ContainerClass`, and `ContainerID`.
 
 ### Manual
