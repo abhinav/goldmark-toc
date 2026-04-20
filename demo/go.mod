@@ -2,8 +2,6 @@ module go.abhg.dev/goldmark/toc/demo
 
 go 1.22
 
-toolchain go1.25.9
-
 replace go.abhg.dev/goldmark/toc => ../
 
 require (

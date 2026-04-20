@@ -2,8 +2,6 @@ module go.abhg.dev/goldmark/toc
 
 go 1.22
 
-toolchain go1.25.9
-
 require (
 	github.com/stretchr/testify v1.11.1
 	github.com/yuin/goldmark v1.8.2
