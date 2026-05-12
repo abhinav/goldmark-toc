@@ -1,6 +1,6 @@
 module go.abhg.dev/goldmark/toc/demo
 
-go 1.22
+go 1.23
 
 replace go.abhg.dev/goldmark/toc => ../
 
