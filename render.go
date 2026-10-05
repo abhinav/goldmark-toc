@@ -1,6 +1,6 @@
 package toc
 
-import "github.com/yuin/goldmark/ast"
+import "github.com/yuin/goldmark/v2/ast"
 
 const _defaultMarker = '*'
 

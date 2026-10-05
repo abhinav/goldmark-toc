@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/yuin/goldmark/ast"
-	"github.com/yuin/goldmark/util"
+	"github.com/yuin/goldmark/v2/ast"
+	"github.com/yuin/goldmark/v2/util"
 )
 
 // InspectOption customizes the behavior of Inspect.
