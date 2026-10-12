@@ -12,10 +12,10 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
       name: Check out repository
     - name: Set up mise
-      uses: jdx/mise-action@v4
+      uses: jdx/mise-action@v5
     - run: mise run lint
       name: Lint
 
@@ -30,12 +30,12 @@ jobs:
       MISE_ENV: ${{ matrix.mise-env }}
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     - name: Set up mise
-      uses: jdx/mise-action@v4
+      uses: jdx/mise-action@v5
       with:
         cache_key_prefix: mise-v0-${{ matrix.mise-env }}
     - name: Test
       run: mise run cover
     - name: Upload coverage
-      uses: codecov/codecov-action@v6
+      uses: codecov/codecov-action@v7
