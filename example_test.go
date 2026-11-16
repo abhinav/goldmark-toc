@@ -3,9 +3,9 @@ package toc_test
 import (
 	"os"
 
-	"github.com/yuin/goldmark"
-	"github.com/yuin/goldmark/parser"
-	"github.com/yuin/goldmark/text"
+	"github.com/yuin/goldmark/v2"
+	"github.com/yuin/goldmark/v2/parser"
+	"github.com/yuin/goldmark/v2/text"
 	"go.abhg.dev/goldmark/toc"
 )
 
